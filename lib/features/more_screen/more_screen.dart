@@ -141,11 +141,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
   ElevatedButton _buildButtonLogOut() {
     return ElevatedButton(
       onPressed: () async {
-        final googleSignInAsync = ref.read(googleSignInProvider.notifier);
-        final googleSignInAsyncState = ref.read(googleSignInProvider);
-        if (googleSignInAsyncState.value != null) {
-          googleSignInAsync.signOut();
-        }
+        await ref.read(googleSignInProvider.notifier).signOut();
       },
       child: Row(
         mainAxisSize: MainAxisSize.min,

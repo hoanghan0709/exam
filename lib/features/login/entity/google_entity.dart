@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:exam/core/service/secure_storage_service.dart';
+import 'package:exam/features/home/controller/get_staff_provider.dart';
+import 'package:exam/features/home/controller/merged_home_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -141,7 +143,10 @@ class GoogleSignInNotifier extends AsyncNotifier<GoogleSignInAccount?> {
   }
 
   Future<void> signOut() async {
-    await GoogleSignIn.instance.disconnect();
+    await GoogleSignIn.instance.signOut();
+    // Tự cập nhật state vì trên iOS stream không phát event sign-out
+    state = const AsyncValue.data(null);
+    ref.read(userModelProvider.notifier).clear();
   }
 }
 

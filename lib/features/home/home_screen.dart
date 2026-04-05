@@ -282,11 +282,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             mainAxisSize: MainAxisSize.min,
             spacing: 12.w,
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 20,
-                backgroundImage: NetworkImage(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuBctWK5OWKCLcJEGDAbhpXWCi8zZ8gUr_yKo4rg5DX_i2esI9jbot8I6MXz-CCgvnCV1GTQnsu8qXc-NNjrT8l_Hluftgo8uPKzeS8vnKWic4RYEJhUpAoXCV7ryN7wXwvWgVe12OX-6JLgSLoiQMdCcy0UBRAfGULEo5l8gRmuUcU6qdVSIxPvvjtn0kw7cNtm1Ug_b5DifrZunn52SPSmO-CCgetvC_wo70EWpFzycU7VPXW4i4DvdXGOTMDzzCXsWtvPx82OEcM',
-                ),
+                backgroundImage: NetworkImage(user?.avatar ?? AppConst.defaultAvatar),
               ),
               Text(
                 'Thông tin nhân viên',
