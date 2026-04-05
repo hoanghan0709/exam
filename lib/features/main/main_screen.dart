@@ -1,6 +1,4 @@
-import 'package:exam/common_widgets/custom_bottomnavigation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:exam/export.dart';
 import 'package:go_router/go_router.dart';
 
 class MainScreen extends ConsumerWidget {
@@ -12,7 +10,7 @@ class MainScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
+    return CommonScaffold(
       body: shell,
       extendBody: true,
       bottomNavigationBar: CustomBottomNavigationBar(
@@ -35,7 +33,7 @@ class MainScreen extends ConsumerWidget {
           // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'Thông tin',
             backgroundColor: Colors.red,
             activeIcon: Icon(Icons.person, color: Colors.white),
           ),

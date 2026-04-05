@@ -18,52 +18,49 @@ class SignInDemo extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final googleSignInAsync = ref.watch(googleSignInProvider);
 
-    return CommonScaffold(
-      appBar: AppBar(title: const Text('Google Sign In')),
-      body: ConstrainedBox(
-        constraints: const BoxConstraints.expand(),
-        child: googleSignInAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error:
-              (e, _) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Error: $e'),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => ref.invalidate(googleSignInProvider),
-                      child: const Text('RETRY'),
-                    ),
-                  ],
-                ),
-              ),
-          data:
-              (user) => Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return ConstrainedBox(
+      constraints: const BoxConstraints.expand(),
+      child: googleSignInAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error:
+            (e, _) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (user != null) ...[
-                    ListTile(
-                      leading: GoogleUserCircleAvatar(identity: user),
-                      title: Text(user.displayName ?? ''),
-                      subtitle: Text(user.email),
-                    ),
-                    const Text('Signed in successfully.'),
-                    ElevatedButton(
-                      onPressed: () => ref.read(googleSignInProvider.notifier).signOut(),
-                      child: const Text('SIGN OUT'),
-                    ),
-                  ] else ...[
-                    const Text('You are not currently signed in.'),
-                    if (GoogleSignIn.instance.supportsAuthenticate())
-                      ElevatedButton(
-                        onPressed: () => ref.read(googleSignInProvider.notifier).signIn(),
-                        child: const Text('SIGN IN'),
-                      ),
-                  ],
+                  Text('Error: $e'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => ref.invalidate(googleSignInProvider),
+                    child: const Text('RETRY'),
+                  ),
                 ],
               ),
-        ),
+            ),
+        data:
+            (user) => Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                if (user != null) ...[
+                  ListTile(
+                    leading: GoogleUserCircleAvatar(identity: user),
+                    title: Text(user.displayName ?? ''),
+                    subtitle: Text(user.email),
+                  ),
+                  const Text('Signed in successfully.'),
+                  ElevatedButton(
+                    onPressed: () => ref.read(googleSignInProvider.notifier).signOut(),
+                    child: const Text('SIGN OUT'),
+                  ),
+                ] else ...[
+                  const Text('You are not currently signed in.'),
+                  if (GoogleSignIn.instance.supportsAuthenticate())
+                    ElevatedButton(
+                      onPressed: () => ref.read(googleSignInProvider.notifier).signIn(),
+                      child: const Text('SIGN IN'),
+                    ),
+                ],
+              ],
+            ),
       ),
     );
   }
