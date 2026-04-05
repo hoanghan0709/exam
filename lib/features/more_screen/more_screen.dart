@@ -28,7 +28,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
     final staffInfoAsync = ref.read(getStaffInfoProvider);
 
     return CommonScaffold(
-      appBar: AppBar(title: const Text('Cài đặt'), backgroundColor: Colors.grey.shade300),
+      appBar: AppBar(title: const Text('Thông tin cá nhân')),
       body: userAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(child: Text('Error: $error')),
@@ -37,7 +37,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
               spacing: 16.h,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 10.h),
+                SizedBox(height: 4.h),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 20.w,
