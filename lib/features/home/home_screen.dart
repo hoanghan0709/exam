@@ -18,7 +18,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   void initState() {
-    super.initState();//code moi tren dev
+    super.initState(); //code moi tren dev
   }
 
   @override
@@ -29,126 +29,122 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final configInfoAsync = ref.watch(getConfigSheetsProvider);
     final linkExamInfoAsync = ref.watch(getLinkExamSheetsProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Trang chủ'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: userAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
-        data:
-            (user) => SafeArea(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Column(
-                  spacing: 24.h,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Hero Section
-                    _buildHeroSection(userAsync.value, staffInfoAsync, context),
+    final ids = ["sdfjkdlsaaf", "fjdkslajfl"]; //all branch
+    // final links = ids .map(idTolinks); // giả sử idTolinks là hàm chuyển đổi id thành link
+    // // Eg: idTolinks(String id) => "https://example.com/sheet/$id";
+    // final datas = links.map(linkToData); // giả sử linkToData là hàm lấy dữ liệu từ link
+    // Eg: linkToData(String link) => fetchDataFromLink(link);
 
-                    // Bento Grid Layout
-                    // _buildLearningGoalCard(),
+    return userAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text('Error: $error')),
+      data:
+          (user) => SingleChildScrollView(
+            child: Column(
+              spacing: 24.h,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Hero Section
+                _buildHeroSection(userAsync.value, staffInfoAsync, context),
 
-                    // Column(
-                    //   spacing: 24.h,
-                    //   crossAxisAlignment: CrossAxisAlignment.start,
-                    //   children: [_buildCreditsCard(), _buildScheduleCard()],
-                    // ),
-                    // Hiển thị danh sách sheets từ API
-                    sheetsAsync.when(
+                // Bento Grid Layout
+                // _buildLearningGoalCard(),
+
+                // Column(
+                //   spacing: 24.h,
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [_buildCreditsCard(), _buildScheduleCard()],
+                // ),
+                // Hiển thị danh sách sheets từ API
+                sheetsAsync.when(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error:
+                      (error, stack) => Center(
+                        child: Column(
+                          children: [
+                            Text('Lỗi tải sheets: $error'),
+                            const SizedBox(height: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                ref.read(getSheetsProvider.notifier).fetchSheets();
+                              },
+                              child: const Text('Thử lại'),
+                            ),
+                          ],
+                        ),
+                      ),
+                  data: (sheets) => _buildSheetsSection(sheets.spreadsheet),
+                ),
+                // _buildRecentResultsCard(),
+                ref
+                    .watch(mergedTCProvider)
+                    .when(
+                      error: (error, stackTrace) => Text('Lỗi tải config: $error'),
                       loading: () => const Center(child: CircularProgressIndicator()),
-                      error:
-                          (error, stack) => Center(
-                            child: Column(
+                      data: (listCreditNumber) {
+                        return Column(
+                          spacing: 8.h,
+                          children: [
+                            Row(
+                              spacing: 6.w,
                               children: [
-                                Text('Lỗi tải sheets: $error'),
-                                const SizedBox(height: 8),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    ref.read(getSheetsProvider.notifier).fetchSheets();
-                                  },
-                                  child: const Text('Thử lại'),
+                                Text(
+                                  "Tín chỉ còn thiếu (${listCreditNumber.length})",
+                                  style: GoogleFonts.manrope(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
                                 ),
+                                Text("(Chọn để học ngay)", style: context.textStyles.body),
                               ],
                             ),
-                          ),
-                      data: (sheets) => _buildSheetsSection(sheets.spreadsheet),
-                    ),
-                    // _buildRecentResultsCard(),
-                    ref
-                        .watch(mergedTCProvider)
-                        .when(
-                          error: (error, stackTrace) => Text('Lỗi tải config: $error'),
-                          loading: () => const Center(child: CircularProgressIndicator()),
-                          data: (listCreditNumber) {
-                            return Column(
-                              spacing: 8.h,
-                              children: [
-                                Row(
-                                  spacing: 6.w,
-                                  children: [
-                                    Text(
-                                      "Tín chỉ còn thiếu (${listCreditNumber.length})",
-                                      style: GoogleFonts.manrope(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                    Text("(Chọn để học ngay)", style: context.textStyles.body),
-                                  ],
-                                ),
-                                listCreditNumber.isEmpty
-                                    ? Container(
-                                      height: 140,
-                                      alignment: Alignment.center,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        spacing: 8,
-                                        children: [
-                                          Icon(Icons.blinds_closed_sharp, color: Colors.red),
-                                          Text('Danh sách tín chỉ trống!'),
-                                        ],
-                                      ),
-                                    )
-                                    : SizedBox(
-                                      height: 400,
-                                      child: Scrollbar(
-                                        child: ListView.separated(
-                                          separatorBuilder:
-                                              (context, index) => const SizedBox(height: 10),
-                                          // shrinkWrap: true,
-                                          // physics: const NeverScrollableScrollPhysics(),
-                                          itemCount: listCreditNumber.length,
-                                          itemBuilder: (context, index) {
-                                            final tc = listCreditNumber[index];
-                                            return GestureDetector(
-                                              onTap: () {
-                                                // Handle press
-                                                _launchUrl(tc.link ?? '');
-                                              },
-                                              child: _buildResultItem(
-                                                tc.topic ?? 'Không xác định',
-                                                'Tín chỉ: ${tc.content ?? '-'}',
-                                                'Học ngay',
-                                              ),
-                                            );
+                            listCreditNumber.isEmpty
+                                ? Container(
+                                  height: 140,
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    spacing: 8,
+                                    children: [
+                                      Icon(Icons.blinds_closed_sharp, color: Colors.red),
+                                      Text('Danh sách tín chỉ trống!'),
+                                    ],
+                                  ),
+                                )
+                                : SizedBox(
+                                  height: 400,
+                                  child: Scrollbar(
+                                    child: ListView.separated(
+                                      separatorBuilder:
+                                          (context, index) => const SizedBox(height: 10),
+                                      // shrinkWrap: true,
+                                      // physics: const NeverScrollableScrollPhysics(),
+                                      itemCount: listCreditNumber.length,
+                                      itemBuilder: (context, index) {
+                                        final tc = listCreditNumber[index];
+                                        return GestureDetector(
+                                          onTap: () {
+                                            // Handle press
+                                            _launchUrl(tc.link ?? '');
                                           },
-                                        ),
-                                      ),
+                                          child: _buildResultItem(
+                                            tc.topic ?? 'Không xác định',
+                                            'Tín chỉ: ${tc.content ?? '-'}',
+                                            'Học ngay',
+                                          ),
+                                        );
+                                      },
                                     ),
-                              ],
-                            );
-                          },
-                        ),
-                    const SizedBox(height: 50),
-                  ],
-                ),
-              ),
+                                  ),
+                                ),
+                          ],
+                        );
+                      },
+                    ),
+                const SizedBox(height: 50),
+              ],
             ),
-      ),
+          ),
     );
   }
 
@@ -540,6 +536,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
         const SizedBox(height: 16),
         ListView.separated(
+          padding: EdgeInsets.zero,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: sheets.sheets!.length,

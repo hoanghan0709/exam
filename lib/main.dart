@@ -1,3 +1,4 @@
+import 'package:exam/export.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,12 +23,13 @@ class MyApp extends ConsumerWidget {
       splitScreenMode: true,
       child: MaterialApp.router(
         theme: ThemeData(
+          highlightColor: Colors.transparent,
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF545C8C),
-            surface: const Color(0xFFFBF8FE),
-            onSurface: const Color(0xFF31323B),
-          ),
+          // colorScheme: ColorScheme.fromSeed(
+          //   // seedColor: const Color(0xFF545C8C),
+          //   // surface: Colors.transparent,
+          //   // onSurface: Colors.red,
+          // ),
           textTheme: GoogleFonts.interTextTheme(),
         ),
         routerConfig: router,
@@ -35,7 +37,8 @@ class MyApp extends ConsumerWidget {
         builder: (context, child) {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
-            child: child!,
+            // child: child!,
+            child: CommonScaffold(body: SafeArea(child: child!)),
           );
         },
       ),
