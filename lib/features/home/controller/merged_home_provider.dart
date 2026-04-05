@@ -1,4 +1,5 @@
 import 'package:exam/export.dart';
+import 'package:exam/utils/ext_formatter.dart';
 
 /// Derived provider — tự động combine config + linkExam
 /// Không cần gọi thủ công, tự rebuild khi 1 trong 2 source thay đổi
@@ -9,11 +10,13 @@ final mergedTCProvider = FutureProvider.autoDispose<List<ListTC>>((ref) async {
   final linkExamState = await ref.watch(getLinkExamSheetsProvider.future);
 
   // 1. Lọc missingCredits
-  final missingCredits =
+  List<String> missingCredits =
       staffInfo.staffInfo.missingCredits?.split(',').map((e) => e.trim()).toList() ?? [];
 
   final filteredTC =
-      configState.listCreditNumber.where((tc) => !missingCredits.contains(tc.content)).toList();
+      configState.listCreditNumber.where((tc) {
+        return missingCredits.any((e) => e.tcNumber == tc.content?.tcNumber);
+      }).toList();
   //2.Merge linkExam vào listTC đã lọc missingCredits để map link tương ứng
   final linkExamSheet = linkExamState.spreadsheet;
   final List<ListTC> result = [];
@@ -35,15 +38,15 @@ final mergedTCProvider = FutureProvider.autoDispose<List<ListTC>>((ref) async {
 
 //from 1->24
 List<String> listCreditNumberDefault = [
-  'TC1',
-  'TC2',
-  'TC3',
-  'TC4',
-  'TC5',
-  'TC6',
-  'TC7',
-  'TC8',
-  'TC9',
+  'TC01',
+  'TC02',
+  'TC03',
+  'TC04',
+  'TC05',
+  'TC06',
+  'TC07',
+  'TC08',
+  'TC09',
   'TC10',
   'TC11',
   'TC12',

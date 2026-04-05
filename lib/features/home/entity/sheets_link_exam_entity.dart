@@ -1,3 +1,5 @@
+import 'package:exam/utils/ext_formatter.dart';
+
 /// Entity cho response từ Google Sheets API (values endpoint)
 /// Ví dụ: LINKBAITEST sheet
 class SheetLinkExamEntity {
@@ -51,7 +53,7 @@ class SheetLinkExamEntity {
   /// Tìm item theo số tín chỉ
   SheetLinkExamItem? findByCredit(String credit) {
     try {
-      return items.firstWhere((e) => e.creditNumber == credit);
+      return items.firstWhere((e) => e.creditNumber?.tcNumber == credit.tcNumber);
     } catch (_) {
       return null;
     }
