@@ -11,7 +11,7 @@ class DashboardScreen extends ConsumerStatefulWidget {
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   // Thêm state để toggle hiển thị
   bool _showAll = false;
-  static const int _maxItems = 5;
+  late int _maxItems;
 
   // Định nghĩa màu gradient đặc trưng từ HTML
   static const LinearGradient signatureGradient = LinearGradient(
@@ -93,41 +93,46 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         () => const SliverToBoxAdapter(
                           child: Center(child: CircularProgressIndicator()),
                         ),
-                    data:
-                        (listCreditNumber) =>
-                            listCreditNumber.isEmpty
-                                ? SliverToBoxAdapter(
-                                  child: Container(
-                                    height: 140,
-                                    alignment: Alignment.center,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      spacing: 8,
-                                      children: [
-                                        Icon(Icons.blinds_closed_sharp, color: Colors.red),
-                                        Text('Danh sách tín chỉ trống!'),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                                : SliverList.separated(
-                                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                                  itemCount:
-                                      _showAll
-                                          ? listCreditNumber.length
-                                          : listCreditNumber.length.clamp(0, _maxItems),
-                                  itemBuilder: (context, index) {
-                                    final tc = listCreditNumber[index];
-                                    return GestureDetector(
-                                      onTap: () => _launchUrl(tc.link ?? ''),
-                                      child: _buildResultItem(
-                                        tc.topic ?? 'Không xác định',
-                                        'Tín chỉ: ${tc.content ?? '-'}',
-                                        'Học ngay',
-                                      ),
-                                    );
-                                  },
+                    data: (listCreditNumber) {
+                      if (listCreditNumber.isEmpty) {
+                        _maxItems = 0;
+                      } else {
+                        _maxItems = listCreditNumber.length.clamp(0, 5);
+                      }
+                      return listCreditNumber.isEmpty
+                          ? SliverToBoxAdapter(
+                            child: Container(
+                              height: 140,
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                spacing: 8,
+                                children: [
+                                  Icon(Icons.blinds_closed_sharp, color: Colors.red),
+                                  Text('Danh sách tín chỉ trống!'),
+                                ],
+                              ),
+                            ),
+                          )
+                          : SliverList.separated(
+                            separatorBuilder: (_, __) => const SizedBox(height: 10),
+                            itemCount:
+                                _showAll
+                                    ? listCreditNumber.length
+                                    : listCreditNumber.length.clamp(0, _maxItems),
+                            itemBuilder: (context, index) {
+                              final tc = listCreditNumber[index];
+                              return GestureDetector(
+                                onTap: () => _launchUrl(tc.link ?? ''),
+                                child: _buildResultItem(
+                                  tc.topic ?? 'Không xác định',
+                                  'Tín chỉ: ${tc.content ?? '-'}',
+                                  'Học ngay',
                                 ),
+                              );
+                            },
+                          );
+                    },
                   ),
 
               // Sliver 5: Nút "Xem thêm" (chỉ hiện khi còn items ẩn)
