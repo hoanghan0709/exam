@@ -31,8 +31,7 @@ class MyApp extends ConsumerWidget {
         builder: (context, child) {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
-            // child: child!,
-            child: CommonScaffold(body: SafeArea(child: child!)),
+            child: CommonScaffold(body: child!, horizontalPadding: 0),
           );
         },
       ),

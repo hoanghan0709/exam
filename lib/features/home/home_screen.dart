@@ -1,5 +1,6 @@
 //import export
 import 'package:exam/export.dart';
+import 'package:exam/features/home/widgets/slivder_gap.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -47,7 +48,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               SliverToBoxAdapter(
                 child: _buildHeroSection(userAsync.value, staffInfoAsync, context),
               ),
-
+              SliverGap(12.h),
               // Sliver 2: Sheets Section
               SliverToBoxAdapter(
                 child: sheetsAsync.when(
@@ -56,7 +57,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   data: (sheets) => _buildSheetsSection(sheets.spreadsheet),
                 ),
               ),
-
+              SliverGap(12.h),
               // Sliver 3: Header "Tín chỉ còn thiếu"
               SliverToBoxAdapter(
                 child: ref
