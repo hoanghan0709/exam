@@ -9,6 +9,10 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  // Thêm state để toggle hiển thị
+  bool _showAll = false;
+  static const int _maxItems = 5;
+
   // Định nghĩa màu gradient đặc trưng từ HTML
   static const LinearGradient signatureGradient = LinearGradient(
     colors: [Color(0xFF545C8C), Color(0xFF48507F)],
@@ -26,8 +30,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final userAsync = ref.watch(userModelProvider);
     final sheetsAsync = ref.watch(getSheetsProvider);
     final staffInfoAsync = ref.watch(getStaffInfoProvider);
-    final configInfoAsync = ref.watch(getConfigSheetsProvider);
-    final linkExamInfoAsync = ref.watch(getLinkExamSheetsProvider);
 
     final ids = ["sdfjkdlsaaf", "fjdkslajfl"]; //all branch
     // final links = ids .map(idTolinks); // giả sử idTolinks là hàm chuyển đổi id thành link
@@ -39,53 +41,33 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(child: Text('Error: $error')),
       data:
-          (user) => SingleChildScrollView(
-            child: Column(
-              spacing: 24.h,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Hero Section
-                _buildHeroSection(userAsync.value, staffInfoAsync, context),
+          (user) => CustomScrollView(
+            slivers: [
+              // Sliver 1: Hero Section (render 1 lần, không lazy)
+              SliverToBoxAdapter(
+                child: _buildHeroSection(userAsync.value, staffInfoAsync, context),
+              ),
 
-                // Bento Grid Layout
-                // _buildLearningGoalCard(),
-
-                // Column(
-                //   spacing: 24.h,
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: [_buildCreditsCard(), _buildScheduleCard()],
-                // ),
-                // Hiển thị danh sách sheets từ API
-                sheetsAsync.when(
+              // Sliver 2: Sheets Section
+              SliverToBoxAdapter(
+                child: sheetsAsync.when(
                   loading: () => const Center(child: CircularProgressIndicator()),
-                  error:
-                      (error, stack) => Center(
-                        child: Column(
-                          children: [
-                            Text('Lỗi tải sheets: $error'),
-                            const SizedBox(height: 8),
-                            ElevatedButton(
-                              onPressed: () {
-                                ref.read(getSheetsProvider.notifier).fetchSheets();
-                              },
-                              child: const Text('Thử lại'),
-                            ),
-                          ],
-                        ),
-                      ),
+                  error: (error, stack) => Center(child: Text('Lỗi tải sheets: $error')),
                   data: (sheets) => _buildSheetsSection(sheets.spreadsheet),
                 ),
-                // _buildRecentResultsCard(),
-                ref
+              ),
+
+              // Sliver 3: Header "Tín chỉ còn thiếu"
+              SliverToBoxAdapter(
+                child: ref
                     .watch(mergedTCProvider)
                     .when(
-                      error: (error, stackTrace) => Text('Lỗi tải config: $error'),
+                      error: (error, _) => Text('Lỗi tải config: $error'),
                       loading: () => const Center(child: CircularProgressIndicator()),
-                      data: (listCreditNumber) {
-                        return Column(
-                          spacing: 8.h,
-                          children: [
-                            Row(
+                      data:
+                          (listCreditNumber) => Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.h),
+                            child: Row(
                               spacing: 6.w,
                               children: [
                                 Text(
@@ -98,53 +80,107 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 Text("(Chọn để học ngay)", style: context.textStyles.body),
                               ],
                             ),
+                          ),
+                    ),
+              ),
+
+              // Sliver 4: List tín chỉ — LAZY RENDER ✅
+              ref
+                  .watch(mergedTCProvider)
+                  .when(
+                    error: (error, _) => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                    loading:
+                        () => const SliverToBoxAdapter(
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                    data:
+                        (listCreditNumber) =>
                             listCreditNumber.isEmpty
-                                ? Container(
-                                  height: 140,
-                                  alignment: Alignment.center,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    spacing: 8,
-                                    children: [
-                                      Icon(Icons.blinds_closed_sharp, color: Colors.red),
-                                      Text('Danh sách tín chỉ trống!'),
-                                    ],
-                                  ),
-                                )
-                                : SizedBox(
-                                  height: 400,
-                                  child: Scrollbar(
-                                    child: ListView.separated(
-                                      separatorBuilder:
-                                          (context, index) => const SizedBox(height: 10),
-                                      // shrinkWrap: true,
-                                      // physics: const NeverScrollableScrollPhysics(),
-                                      itemCount: listCreditNumber.length,
-                                      itemBuilder: (context, index) {
-                                        final tc = listCreditNumber[index];
-                                        return GestureDetector(
-                                          onTap: () {
-                                            // Handle press
-                                            _launchUrl(tc.link ?? '');
-                                          },
-                                          child: _buildResultItem(
-                                            tc.topic ?? 'Không xác định',
-                                            'Tín chỉ: ${tc.content ?? '-'}',
-                                            'Học ngay',
-                                          ),
-                                        );
-                                      },
+                                ? SliverToBoxAdapter(
+                                  child: Container(
+                                    height: 140,
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      spacing: 8,
+                                      children: [
+                                        Icon(Icons.blinds_closed_sharp, color: Colors.red),
+                                        Text('Danh sách tín chỉ trống!'),
+                                      ],
                                     ),
                                   ),
+                                )
+                                : SliverList.separated(
+                                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                                  itemCount:
+                                      _showAll
+                                          ? listCreditNumber.length
+                                          : listCreditNumber.length.clamp(0, _maxItems),
+                                  itemBuilder: (context, index) {
+                                    final tc = listCreditNumber[index];
+                                    return GestureDetector(
+                                      onTap: () => _launchUrl(tc.link ?? ''),
+                                      child: _buildResultItem(
+                                        tc.topic ?? 'Không xác định',
+                                        'Tín chỉ: ${tc.content ?? '-'}',
+                                        'Học ngay',
+                                      ),
+                                    );
+                                  },
                                 ),
-                          ],
-                        );
-                      },
-                    ),
-                const SizedBox(height: 50),
-              ],
-            ),
+                  ),
+
+              // Sliver 5: Nút "Xem thêm" (chỉ hiện khi còn items ẩn)
+              ref
+                  .watch(mergedTCProvider)
+                  .when(
+                    error: (_, __) => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                    loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                    data:
+                        (listCreditNumber) =>
+                            listCreditNumber.length > _maxItems
+                                ? SliverToBoxAdapter(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                                    child: Center(
+                                      child: TextButton.icon(
+                                        onPressed: () {
+                                          setState(() {
+                                            _showAll = !_showAll;
+                                          });
+                                        },
+                                        icon: Icon(
+                                          _showAll ? Icons.expand_less : Icons.expand_more,
+                                          color: const Color(0xFF545C8C),
+                                        ),
+                                        label: Text(
+                                          _showAll
+                                              ? 'Thu gọn'
+                                              : 'Xem thêm (${listCreditNumber.length - _maxItems} còn lại)',
+                                          style: const TextStyle(
+                                            color: Color(0xFF545C8C),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                : const SliverToBoxAdapter(child: SizedBox.shrink()),
+                  ),
+
+              // Spacing cuối
+              SliverToBoxAdapter(child: SizedBox(height: 150)),
+            ],
           ),
+      //  SingleChildScrollView(
+      //   child: Column(
+      //     spacing: 24.h,
+      //     crossAxisAlignment: CrossAxisAlignment.start,
+      //     children: [
+      //     ],
+      //   ),
+      // ),
     );
   }
 
