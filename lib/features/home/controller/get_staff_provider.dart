@@ -23,8 +23,8 @@ class GetStaffInfoProvider extends AsyncNotifier<GetStaffInfoState> {
       return GetStaffInfoState(staffInfo: const InforStaffEntity.empty());
     }
 
-    // Lấy email user đang login
-    final user = await ref.read(userModelProvider.future);
+    // Lấy email user đang login (watch để tự rebuild khi user thay đổi)
+    final user = await ref.watch(userModelProvider.future);
     final userEmail = user.email ?? '';
 
     if (userEmail.isEmpty) {
