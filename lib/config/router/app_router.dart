@@ -76,11 +76,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         name: AppPaths.login.pathName,
         builder: (context, state) => const LoginScreen(),
       ),
-      GoRoute(
-        path: AppPaths.loginEmail.path,
-        name: AppPaths.loginEmail.pathName,
-        builder: (context, state) => const SignInDemo(),
-      ),
+      // GoRoute(
+      //   path: AppPaths.loginEmail.path,
+      //   name: AppPaths.loginEmail.pathName,
+      //   builder: (context, state) => const SignInDemo(),
+      // ),
     ],
   );
 

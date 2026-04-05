@@ -1,6 +1,7 @@
 //import export
 import 'package:exam/export.dart';
 import 'package:exam/features/home/widgets/slivder_gap.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -103,14 +104,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       return listCreditNumber.isEmpty
                           ? SliverToBoxAdapter(
                             child: Container(
-                              height: 140,
+                              height: 200.h,
                               alignment: Alignment.center,
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
-                                spacing: 8,
+                                spacing: 22.h,
                                 children: [
-                                  Icon(Icons.blinds_closed_sharp, color: Colors.red),
-                                  Text('Danh sách tín chỉ trống!'),
+                                  Icon(LucideIcons.databaseSearch, color: Colors.grey, size: 80),
+                                  Text(
+                                    'Bạn không thiếu tín chỉ nào!',
+                                    style: context.textStyles.body.copyWith(color: Colors.grey),
+                                  ),
                                 ],
                               ),
                             ),

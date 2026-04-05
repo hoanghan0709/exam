@@ -20,7 +20,13 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
       final isLoggedOut = next.value?.id == null;
 
       if (wasLoggedIn && isLoggedOut && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã đăng xuất')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red.shade300,
+            behavior: SnackBarBehavior.floating,
+            content: Text('Đã đăng xuất'),
+          ),
+        );
       }
     });
 
@@ -80,14 +86,14 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                                 error: (e, _) => const SizedBox.shrink(),
                                 data: (staffInfoState) {
                                   final staffInfo = staffInfoState.staffInfo;
-                                  return Text(staffInfo.position?.value ?? '');
+                                  return Text(staffInfo.position?.value ?? 'Không có vị trí');
                                 },
                               ),
                             ],
                           ),
                         ),
                         Text('Email', style: const TextStyle(fontSize: 14, color: Colors.grey)),
-                        Text("${user.email} nguyen. ngoc hoang huy" ?? ''),
+                        Text(user.email ?? 'Không có email'),
                       ],
                     ),
                   ),
@@ -103,10 +109,11 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Tín chỉ còn thiếu (${listCreditNumber.length ?? 0})',
-                            style: const TextStyle(fontSize: 14, color: Colors.grey),
-                          ),
+                          if (listCreditNumber.isNotEmpty)
+                            Text(
+                              'Tín chỉ còn thiếu (${listCreditNumber.length ?? 0})',
+                              style: const TextStyle(fontSize: 14, color: Colors.grey),
+                            ),
                           Wrap(
                             spacing: 8.h,
                             children: [
