@@ -27,12 +27,12 @@ class MainScreen extends ConsumerWidget {
             backgroundColor: Colors.red,
             activeIcon: Icon(Icons.home, color: Colors.white),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Lịch trình\n kết quả',
-            backgroundColor: Colors.red,
-            activeIcon: Icon(Icons.person, color: Colors.white),
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.person),
+          //   label: 'Lịch trình\n kết quả',
+          //   backgroundColor: Colors.red,
+          //   activeIcon: Icon(Icons.person, color: Colors.white),
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
