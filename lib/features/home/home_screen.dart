@@ -1,4 +1,5 @@
 //import export
+import 'package:exam/common_widgets/common_shimmer.dart';
 import 'package:exam/export.dart';
 import 'package:exam/features/home/widgets/slivder_gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -53,7 +54,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               // Sliver 2: Sheets Section
               SliverToBoxAdapter(
                 child: sheetsAsync.when(
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () => const ShimmerSheetsSection(),
                   error: (error, stack) => Center(child: Text('Lỗi tải sheets: $error')),
                   data: (sheets) => _buildSheetsSection(sheets.spreadsheet),
                 ),
@@ -65,7 +66,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     .watch(mergedTCProvider)
                     .when(
                       error: (error, _) => Text('Lỗi tải config: $error'),
-                      loading: () => const Center(child: CircularProgressIndicator()),
+                      loading: () => const ShimmerSheetsSection(),
                       data:
                           (listCreditNumber) => Padding(
                             padding: EdgeInsets.symmetric(vertical: 8.h),
@@ -91,10 +92,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   .watch(mergedTCProvider)
                   .when(
                     error: (error, _) => const SliverToBoxAdapter(child: SizedBox.shrink()),
-                    loading:
-                        () => const SliverToBoxAdapter(
-                          child: Center(child: CircularProgressIndicator()),
-                        ),
+                    loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
                     data: (listCreditNumber) {
                       if (listCreditNumber.isEmpty) {
                         _maxItems = 0;

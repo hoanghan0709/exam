@@ -66,6 +66,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: AppPaths.moreScreen.path,
                 name: AppPaths.moreScreen.pathName,
                 builder: (context, state) => const MoreScreen(),
+                pageBuilder:
+                    (context, state) =>
+                        NoTransitionPage(key: state.pageKey, child: const MoreScreen()),
               ),
             ],
           ),
@@ -75,6 +78,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppPaths.login.path,
         name: AppPaths.login.pathName,
         builder: (context, state) => const LoginScreen(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(key: state.pageKey, child: const LoginScreen()),
       ),
       // GoRoute(
       //   path: AppPaths.loginEmail.path,

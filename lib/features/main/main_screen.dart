@@ -12,7 +12,7 @@ class MainScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return CommonScaffold(
       body: shell,
-      extendBody: true,
+      extendBody: false,
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: shell.currentIndex,
         onTabChanged: (index) {

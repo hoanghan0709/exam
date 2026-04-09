@@ -1,3 +1,4 @@
+import 'package:exam/common_widgets/common_button.dart';
 import 'package:exam/export.dart';
 import 'package:exam/features/login/entity/google_entity.dart';
 import 'package:flutter/material.dart';
@@ -138,15 +139,17 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                       );
                     },
                   ),
-              _buildButtonLogOut(),
+              Row(children: [Expanded(child: _buildButtonLogOut())]),
               SizedBox(height: 40.h),
             ],
           ),
     );
   }
 
-  ElevatedButton _buildButtonLogOut() {
-    return ElevatedButton(
+  Widget _buildButtonLogOut() {
+    return CommonButton(
+      height: 50,
+      radius: 22,
       onPressed: () async {
         await ref.read(googleSignInProvider.notifier).signOut();
       },
@@ -155,7 +158,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
         spacing: 8,
         children: [
           Icon(Icons.power_settings_new, color: Colors.redAccent),
-          const Text('Đăng xuất', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          Text('Đăng xuất', style: context.textStyles.buttonLabel.copyWith(color: Colors.white)),
         ],
       ),
     );
