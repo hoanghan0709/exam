@@ -1,6 +1,7 @@
 //import export
 import 'package:exam/common_widgets/common_shimmer.dart';
 import 'package:exam/export.dart';
+import 'package:exam/features/home/controller/get_today_schedule_provider.dart';
 import 'package:exam/features/home/widgets/slivder_gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -30,15 +31,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(getSheetsProvider);
+    ref.watch(getConfigSheetsProvider.future);
     final userAsync = ref.watch(userModelProvider);
-    final sheetsAsync = ref.watch(getSheetsProvider);
     final staffInfoAsync = ref.watch(getStaffInfoProvider);
-
-    final ids = ["sdfjkdlsaaf", "fjdkslajfl"]; //all branch
-    // final links = ids .map(idTolinks); // giả sử idTolinks là hàm chuyển đổi id thành link
-    // // Eg: idTolinks(String id) => "https://example.com/sheet/$id";
-    // final datas = links.map(linkToData); // giả sử linkToData là hàm lấy dữ liệu từ link
-    // Eg: linkToData(String link) => fetchDataFromLink(link);
+    final todayScheduleState = ref.watch(getTodayScheduleProvider);
 
     return userAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -46,20 +43,61 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       data:
           (user) => CustomScrollView(
             slivers: [
-              // Sliver 1: Hero Section (render 1 lần, không lazy)
+              // Sliver 1: Hero Section
               SliverToBoxAdapter(
                 child: _buildHeroSection(userAsync.value, staffInfoAsync, context),
               ),
               SliverGap(12.h),
-              // Sliver 2: Sheets Section
+
+              // Sliver 2: Tín chỉ đã đạt (Wrap chips)
               SliverToBoxAdapter(
-                child: sheetsAsync.when(
-                  loading: () => const ShimmerSheetsSection(),
-                  error: (error, stack) => Center(child: Text('Lỗi tải sheets: $error')),
-                  data: (sheets) => _buildSheetsSection(sheets.spreadsheet),
-                ),
+                child: ref
+                    .watch(mergedTCProvider)
+                    .when(
+                      error: (error, _) => Text('Lỗi tải config: $error'),
+                      loading: () => const ShimmerSheetsSection(),
+                      data: (listCreditNumber) {
+                        if (listCreditNumber.passedTC.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 12.h),
+                          child: Text(
+                            'Tín chỉ đã đạt (${listCreditNumber.passedTC.length}/${todayScheduleState.value?.length ?? 0})',
+                            style: GoogleFonts.manrope(fontWeight: FontWeight.bold, fontSize: 18),
+                          ),
+                        );
+                      },
+                    ),
               ),
+
+              // Sliver 2b: List tín chỉ đã đạt — SliverList
+              ref
+                  .watch(mergedTCProvider)
+                  .when(
+                    error: (_, __) => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                    loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                    data: (listCreditNumber) {
+                      if (listCreditNumber.passedTC.isEmpty) {
+                        return const SliverToBoxAdapter(child: SizedBox.shrink());
+                      }
+                      return SliverList.separated(
+                        separatorBuilder: (_, __) => const SizedBox(height: 10),
+                        itemCount: listCreditNumber.passedTC.length,
+                        itemBuilder: (context, index) {
+                          final tc = listCreditNumber.passedTC[index];
+                          return _buildResultItem(
+                            tc.topic ?? 'Không xác định',
+                            'Tín chỉ: ${tc.content ?? '-'}',
+                            'Đã đạt ✓',
+                          );
+                        },
+                      );
+                    },
+                  ),
+
               SliverGap(12.h),
+
               // Sliver 3: Header "Tín chỉ còn thiếu"
               SliverToBoxAdapter(
                 child: ref
@@ -67,23 +105,32 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     .when(
                       error: (error, _) => Text('Lỗi tải config: $error'),
                       loading: () => const ShimmerSheetsSection(),
-                      data:
-                          (listCreditNumber) => Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.h),
-                            child: Row(
-                              spacing: 6.w,
-                              children: [
-                                Text(
-                                  "Tín chỉ còn thiếu (${listCreditNumber.length})",
-                                  style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                      data: (listCreditNumber) {
+                        final todaySchedule = ref.watch(getTodayScheduleProvider);
+                        int missing = listCreditNumber.missingTC.length;
+                        int total = todaySchedule.value?.length ?? 0;
+
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.h),
+                              child: Row(
+                                spacing: 6.w,
+                                children: [
+                                  Text(
+                                    "Tín chỉ còn thiếu ($missing/$total)",
+                                    style: GoogleFonts.manrope(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                ),
-                                Text("(Chọn để học ngay)", style: context.textStyles.body),
-                              ],
+                                  Text("(Chọn để học ngay)", style: context.textStyles.body),
+                                ],
+                              ),
                             ),
-                          ),
+                          ],
+                        );
+                      },
                     ),
               ),
 
@@ -94,12 +141,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     error: (error, _) => const SliverToBoxAdapter(child: SizedBox.shrink()),
                     loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
                     data: (listCreditNumber) {
-                      if (listCreditNumber.isEmpty) {
+                      if (listCreditNumber.missingTC.isEmpty) {
                         _maxItems = 0;
                       } else {
-                        _maxItems = listCreditNumber.length.clamp(0, 5);
+                        _maxItems = listCreditNumber.missingTC.length.clamp(0, 5);
                       }
-                      return listCreditNumber.isEmpty
+                      return listCreditNumber.missingTC.isEmpty
                           ? SliverToBoxAdapter(
                             child: Container(
                               height: 200.h,
@@ -121,10 +168,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             separatorBuilder: (_, __) => const SizedBox(height: 10),
                             itemCount:
                                 _showAll
-                                    ? listCreditNumber.length
-                                    : listCreditNumber.length.clamp(0, _maxItems),
+                                    ? listCreditNumber.missingTC.length
+                                    : listCreditNumber.missingTC.length.clamp(0, _maxItems),
                             itemBuilder: (context, index) {
-                              final tc = listCreditNumber[index];
+                              final tc = listCreditNumber.missingTC[index];
                               return GestureDetector(
                                 onTap: () => _launchUrl(tc.link ?? ''),
                                 child: _buildResultItem(
@@ -146,7 +193,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
                     data:
                         (listCreditNumber) =>
-                            listCreditNumber.length > _maxItems
+                            listCreditNumber.missingTC.length > _maxItems
                                 ? SliverToBoxAdapter(
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -164,7 +211,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                         label: Text(
                                           _showAll
                                               ? 'Thu gọn'
-                                              : 'Xem thêm (${listCreditNumber.length - _maxItems} còn lại)',
+                                              : 'Xem thêm (${listCreditNumber.missingTC.length - _maxItems} còn lại)',
                                           style: const TextStyle(
                                             color: Color(0xFF545C8C),
                                             fontWeight: FontWeight.bold,
@@ -482,59 +529,59 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  Widget _buildScheduleCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 24,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Lịch học hôm nay',
-                style: GoogleFonts.manrope(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const Text(
-                'Xem tất cả',
-                style: TextStyle(
-                  color: Color(0xFF545C8C),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          _buildScheduleItem(
-            'Thứ 3',
-            '14',
-            'Bảo trì Hệ thống Core',
-            '09:00 - 11:30 • Zoom Online',
-            const Color(0xFFE0E1F9),
-          ),
-          const SizedBox(height: 16),
-          _buildScheduleItem(
-            'Thứ 3',
-            '14',
-            'Kỹ năng làm việc nhóm',
-            '14:00 - 15:30 • Phòng họp 4',
-            const Color(0xFFF1CEFC),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildScheduleCard() {
+  //   return Container(
+  //     padding: const EdgeInsets.all(24),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.circular(24),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: Colors.black.withOpacity(0.02),
+  //           blurRadius: 24,
+  //           offset: const Offset(0, -4),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Column(
+  //       children: [
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: [
+  //             Text(
+  //               'Lịch học hôm nay',
+  //               style: GoogleFonts.manrope(fontWeight: FontWeight.bold, fontSize: 18),
+  //             ),
+  //             const Text(
+  //               'Xem tất cả',
+  //               style: TextStyle(
+  //                 color: Color(0xFF545C8C),
+  //                 fontWeight: FontWeight.bold,
+  //                 fontSize: 12,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 24),
+  //         _buildScheduleItem(
+  //           'Thứ 3',
+  //           '14',
+  //           'Bảo trì Hệ thống Core',
+  //           '09:00 - 11:30 • Zoom Online',
+  //           const Color(0xFFE0E1F9),
+  //         ),
+  //         const SizedBox(height: 16),
+  //         _buildScheduleItem(
+  //           'Thứ 3',
+  //           '14',
+  //           'Kỹ năng làm việc nhóm',
+  //           '14:00 - 15:30 • Phòng họp 4',
+  //           const Color(0xFFF1CEFC),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildScheduleItem(String day, String date, String title, String info, Color bgColor) {
     return Row(
@@ -565,45 +612,83 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  Widget _buildSheetsSection(SpreadsheetEntity sheets) {
-    if (sheets.sheets == null || sheets.sheets!.isEmpty) {
-      return const Center(child: Text('Không có dữ liệu'));
+  Widget _buildSheetsSection(List<ListTC> sheets) {
+    if (sheets.isEmpty) {
+      return SliverToBoxAdapter(child: const Center(child: Text('Không có dữ liệu')));
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Lịch học hôm nay',
-          style: GoogleFonts.manrope(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        const SizedBox(height: 16),
-        ListView.separated(
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: sheets.sheets!.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemBuilder: (context, index) {
-            final sheet = sheets.sheets![index];
-            return Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 12,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+    return ref
+        .watch(mergedTCProvider)
+        .when(
+          error: (_, __) => const SliverToBoxAdapter(child: SizedBox.shrink()),
+          loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+          data:
+              (listCreditNumber) => SliverList.separated(
+                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                itemCount: listCreditNumber.passedTC.length,
+                itemBuilder: (context, index) {
+                  final tc = listCreditNumber.passedTC[index];
+                  return _buildResultItem(
+                    tc.topic ?? 'Không xác định',
+                    'Tín chỉ: ${tc.content ?? '-'}',
+                    'Đã đạt ✓',
+                  );
+                },
               ),
-              child: Text(sheet.properties?.title ?? "", style: const TextStyle(fontSize: 14)),
-            );
-          },
-        ),
-      ],
-    );
+        );
+    //  Column(
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   children: [
+    //     Text(
+    //       'Tín chỉ đã đạt',
+    //       style: GoogleFonts.manrope(fontWeight: FontWeight.bold, fontSize: 18),
+    //     ),
+    //     const SizedBox(height: 16),
+    //     // ListView.separated(
+    //     //   padding: EdgeInsets.zero,
+    //     //   shrinkWrap: true,
+    //     //   physics: const NeverScrollableScrollPhysics(),
+    //     //   itemCount: sheets.length,
+    //     //   separatorBuilder: (_, __) => const SizedBox(height: 12),
+    //     //   itemBuilder: (context, index) {
+    //     //     final sheet = sheets[index];
+    //     //     return Container(
+    //     //       padding: const EdgeInsets.all(16),
+    //     //       decoration: BoxDecoration(
+    //     //         color: Colors.white,
+    //     //         borderRadius: BorderRadius.circular(16),
+    //     //         boxShadow: [
+    //     //           BoxShadow(
+    //     //             color: Colors.black.withOpacity(0.04),
+    //     //             blurRadius: 12,
+    //     //             offset: const Offset(0, 2),
+    //     //           ),
+    //     //         ],
+    //     //       ),
+    //     //       child: Text(sheet.content ?? "", style: const TextStyle(fontSize: 14)),
+    //     //     );
+    //     //   },
+    //     // ),
+    //     ref
+    //         .watch(mergedTCProvider)
+    //         .when(
+    //           error: (_, __) => const SliverToBoxAdapter(child: SizedBox.shrink()),
+    //           loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+    //           data:
+    //               (listCreditNumber) => SliverList.separated(
+    //                 separatorBuilder: (_, __) => const SizedBox(height: 10),
+    //                 itemCount: listCreditNumber.passedTC.length,
+    //                 itemBuilder: (context, index) {
+    //                   final tc = listCreditNumber.passedTC[index];
+    //                   return _buildResultItem(
+    //                     tc.topic ?? 'Không xác định',
+    //                     'Tín chỉ: ${tc.content ?? '-'}',
+    //                     'Đã đạt ✓',
+    //                   );
+    //                 },
+    //               ),
+    //         ),
+    //   ],
+    // );
   }
 
   Widget _buildRecentResultsCard() {
@@ -648,7 +733,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade100,
+                  color: Colors.blue.shade100,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -656,7 +741,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green,
+                    color: Colors.blue,
                   ),
                 ),
               ),

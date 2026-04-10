@@ -110,15 +110,15 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (listCreditNumber.isNotEmpty)
+                          if (listCreditNumber.missingTC.isNotEmpty)
                             Text(
-                              'Tín chỉ còn thiếu (${listCreditNumber.length ?? 0})',
+                              'Tín chỉ còn thiếu (${listCreditNumber.missingTC.length ?? 0})',
                               style: const TextStyle(fontSize: 14, color: Colors.grey),
                             ),
                           Wrap(
                             spacing: 8.h,
                             children: [
-                              for (var item in listCreditNumber)
+                              for (var item in listCreditNumber.missingTC)
                                 Container(
                                   width: 70,
                                   alignment: Alignment.center,

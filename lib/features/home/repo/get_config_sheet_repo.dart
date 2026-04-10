@@ -1,5 +1,6 @@
 //use apiclient to get list sheets
 
+import 'package:dio/dio.dart';
 import 'package:exam/export.dart';
 
 class GetConfigSheetsRepo {
@@ -9,7 +10,7 @@ class GetConfigSheetsRepo {
 
   Future<SheetConfigEntity> call({String? sheetName}) async {
     try {
-      late final response;
+      late final Response response;
 
       if (sheetName != null) {
         response = await _apiClient.get(

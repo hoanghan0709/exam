@@ -10,6 +10,7 @@ class GetStaffInfoState {
   }
 }
 
+// get staff info provider, depend on getSheetsProvider and userModelProvider to get gridRange and user email, then call api to get staff info
 class GetStaffInfoProvider extends AsyncNotifier<GetStaffInfoState> {
   @override
   Future<GetStaffInfoState> build() async {
