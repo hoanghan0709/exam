@@ -10,6 +10,7 @@ class GetStaffInfoState {
   }
 }
 
+// get staff info provider, depend on getSheetsProvider and userModelProvider to get gridRange and user email, then call api to get staff info
 class GetStaffInfoProvider extends AsyncNotifier<GetStaffInfoState> {
   @override
   Future<GetStaffInfoState> build() async {
@@ -17,7 +18,7 @@ class GetStaffInfoProvider extends AsyncNotifier<GetStaffInfoState> {
     final sheetsState = await ref.watch(getSheetsProvider.future);
     final gridRange = sheetsState.gridRange;
 
-    print('gridRange in GetStaffInfoProvider: $gridRange'); // Debug log
+    AppLogger.info('gridRange in GetStaffInfoProvider: $gridRange'); // Debug log
 
     if (gridRange.isEmpty) {
       return GetStaffInfoState(staffInfo: const InforStaffEntity.empty());

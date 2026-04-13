@@ -1,5 +1,5 @@
+import 'package:exam/features/credit_passed/widgets/credit_passed_screen.dart';
 import 'package:exam/features/login/entity/google_entity.dart';
-import 'package:exam/features/login/login_email_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -46,10 +46,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      StatefulShellRoute.indexedStack(
-        builder: (context, state, shell) {
-          return MainScreen(shell: shell);
+      StatefulShellRoute(
+        // navigationShell :current page is show
+        navigatorContainerBuilder: (context, navigationShell, children) {
+          return MainScreen(shell: navigationShell, children: children);
         },
+        builder: (context, state, shell) {
+          return shell;
+        },
+        // builder: (context, state, shell) {
+        //   return MainScreen(shell: shell);
+        // },
         branches: [
           StatefulShellBranch(
             routes: [
@@ -60,12 +67,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
+
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppPaths.creditPassed.path,
+                name: AppPaths.creditPassed.pathName,
+                builder: (context, state) => const CreditPassedScreen(),
+                pageBuilder:
+                    (context, state) =>
+                        NoTransitionPage(key: state.pageKey, child: const CreditPassedScreen()),
+              ),
+            ],
+          ),
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: AppPaths.moreScreen.path,
                 name: AppPaths.moreScreen.pathName,
                 builder: (context, state) => const MoreScreen(),
+                pageBuilder:
+                    (context, state) =>
+                        NoTransitionPage(key: state.pageKey, child: const MoreScreen()),
               ),
             ],
           ),
@@ -75,6 +98,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppPaths.login.path,
         name: AppPaths.login.pathName,
         builder: (context, state) => const LoginScreen(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(key: state.pageKey, child: const LoginScreen()),
       ),
       // GoRoute(
       //   path: AppPaths.loginEmail.path,

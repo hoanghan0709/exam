@@ -1,4 +1,5 @@
 // // create object for this json
+
 class SheetConfigEntity {
   final String? range;
   final String? majorDimension;
@@ -15,6 +16,20 @@ class SheetConfigEntity {
               ?.map((e) => (e as List<dynamic>).map((v) => v?.toString()).toList())
               .toList(),
     );
+  }
+  List<String> getListTCByPosition(String position) {
+    if (values == null || values!.length < 2) return [];
+    final header = values![0];
+    return values!
+        .skip(1) // skip header
+        .where((row) => row.isNotEmpty && row[0]?.toLowerCase() == position.toLowerCase())
+        .expand((e) {
+          return [
+            for (int i = 1; i < e.length; i++)
+              if (e[i] == '1' && i < header.length && header[i] != null) header[i]!,
+          ];
+        })
+        .toList();
   }
 
   Map<String, dynamic> toJson() => {

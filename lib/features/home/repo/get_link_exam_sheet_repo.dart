@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:exam/export.dart';
 
 class GetLinkExamSheetsRepo {
@@ -7,7 +8,7 @@ class GetLinkExamSheetsRepo {
 
   Future<SheetLinkExamEntity> call({String? sheetName}) async {
     try {
-      late final response;
+      late final Response response;
 
       if (sheetName != null) {
         response = await _apiClient.get(

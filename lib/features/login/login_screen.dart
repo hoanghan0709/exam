@@ -1,18 +1,7 @@
 //create with CommonWidget of riverpod
-
-import 'package:exam/common_widgets/common_pressable.dart';
-import 'package:exam/common_widgets/common_scaffold.dart';
 import 'package:exam/export.dart';
-import 'package:exam/gen/assets.gen.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:google_sign_in/widgets.dart';
-
-import '../../common_widgets/common_textfield.dart';
-import '../../config/router/app_paths.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -43,7 +32,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   color: Theme.of(context).colorScheme.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: context.colors.textPrimary.withOpacity(0.1),
                       blurRadius: 8.r,
                       offset: Offset(0, 4.r),
                     ),
@@ -117,7 +106,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       color: Colors.white,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
+                                          color: context.colors.textPrimary.withOpacity(0.1),
                                           blurRadius: 4.r,
                                           offset: Offset(0, 2.r),
                                         ),
@@ -126,7 +115,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     child: FaIcon(
                                       FontAwesomeIcons.google,
                                       size: 20.r,
-                                      color: Colors.red,
+                                      color: context.colors.error,
                                     ),
                                   ),
                               ],

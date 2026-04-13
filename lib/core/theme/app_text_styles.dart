@@ -3,21 +3,37 @@ import 'package:flutter/material.dart';
 class AppTextStyles extends ThemeExtension<AppTextStyles> {
   const AppTextStyles({
     required this.heading,
+    required this.title,
     required this.subtitle,
     required this.fieldLabel,
     required this.body,
+    required this.bodyBold,
     required this.buttonLabel,
     required this.caption,
+    required this.labelSmall,
     required this.link,
+    required this.badge,
   });
 
   final TextStyle heading;
+
+  /// Dùng cho tiêu đề section (18-20px, bold)
+  final TextStyle title;
   final TextStyle subtitle;
   final TextStyle fieldLabel;
   final TextStyle body;
+
+  /// Dùng cho body text cần nhấn mạnh (bold)
+  final TextStyle bodyBold;
   final TextStyle buttonLabel;
   final TextStyle caption;
+
+  /// Dùng cho label nhỏ (10px) như "Nội dung:", "Tín chỉ:"
+  final TextStyle labelSmall;
   final TextStyle link;
+
+  /// Dùng cho badge/chip text (10-11px, bold)
+  final TextStyle badge;
 
   static const light = AppTextStyles(
     heading: TextStyle(
@@ -26,6 +42,7 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       color: Color(0xFF3D4F3F),
       letterSpacing: 1.5,
     ),
+    title: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A1C1A)),
     subtitle: TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.w500,
@@ -39,6 +56,7 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       letterSpacing: 2,
     ),
     body: TextStyle(fontSize: 13, color: Color(0xFF9E9E9E)),
+    bodyBold: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF1A1C1A)),
     buttonLabel: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 1),
     caption: TextStyle(
       fontSize: 10,
@@ -46,7 +64,9 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       color: Color(0xFF9E9E9E),
       letterSpacing: 3,
     ),
+    labelSmall: TextStyle(fontSize: 10, color: Color(0xFF5E5E68)),
     link: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF3D4F3F)),
+    badge: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
   );
 
   static const dark = AppTextStyles(
@@ -56,6 +76,7 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       color: Color(0xFFF5F5F5),
       letterSpacing: 1.5,
     ),
+    title: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFF5F5F5)),
     subtitle: TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.w500,
@@ -69,6 +90,7 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       letterSpacing: 2,
     ),
     body: TextStyle(fontSize: 13, color: Color(0xFF9E9E9E)),
+    bodyBold: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFFF5F5F5)),
     buttonLabel: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 1),
     caption: TextStyle(
       fontSize: 10,
@@ -76,27 +98,37 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       color: Color(0xFF9E9E9E),
       letterSpacing: 3,
     ),
+    labelSmall: TextStyle(fontSize: 10, color: Color(0xFF9E9E9E)),
     link: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFFD9B382)),
+    badge: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
   );
 
   @override
   AppTextStyles copyWith({
     TextStyle? heading,
+    TextStyle? title,
     TextStyle? subtitle,
     TextStyle? fieldLabel,
     TextStyle? body,
+    TextStyle? bodyBold,
     TextStyle? buttonLabel,
     TextStyle? caption,
+    TextStyle? labelSmall,
     TextStyle? link,
+    TextStyle? badge,
   }) {
     return AppTextStyles(
       heading: heading ?? this.heading,
+      title: title ?? this.title,
       subtitle: subtitle ?? this.subtitle,
       fieldLabel: fieldLabel ?? this.fieldLabel,
       body: body ?? this.body,
+      bodyBold: bodyBold ?? this.bodyBold,
       buttonLabel: buttonLabel ?? this.buttonLabel,
       caption: caption ?? this.caption,
+      labelSmall: labelSmall ?? this.labelSmall,
       link: link ?? this.link,
+      badge: badge ?? this.badge,
     );
   }
 
@@ -105,12 +137,16 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
     if (other is! AppTextStyles) return this;
     return AppTextStyles(
       heading: TextStyle.lerp(heading, other.heading, t)!,
+      title: TextStyle.lerp(title, other.title, t)!,
       subtitle: TextStyle.lerp(subtitle, other.subtitle, t)!,
       fieldLabel: TextStyle.lerp(fieldLabel, other.fieldLabel, t)!,
       body: TextStyle.lerp(body, other.body, t)!,
+      bodyBold: TextStyle.lerp(bodyBold, other.bodyBold, t)!,
       buttonLabel: TextStyle.lerp(buttonLabel, other.buttonLabel, t)!,
       caption: TextStyle.lerp(caption, other.caption, t)!,
+      labelSmall: TextStyle.lerp(labelSmall, other.labelSmall, t)!,
       link: TextStyle.lerp(link, other.link, t)!,
+      badge: TextStyle.lerp(badge, other.badge, t)!,
     );
   }
 }

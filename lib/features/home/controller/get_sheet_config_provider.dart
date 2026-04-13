@@ -36,7 +36,7 @@ class SheetConfigState {
   SheetConfigState.empty() : spreadsheet = const SheetConfigEntity(), listCreditNumber = [];
 }
 
-//with AsyncNotifier
+//with AsyncNotifier for CAU HINH provider
 class GetSheetConfigProvider extends AsyncNotifier<SheetConfigState> {
   @override
   Future<SheetConfigState> build() async {
@@ -49,10 +49,12 @@ class GetSheetConfigProvider extends AsyncNotifier<SheetConfigState> {
     final getRepository = ref.read(getConfigSheetsRepoProvider);
     try {
       final sheets = await getRepository.call(sheetName: AppConst.configKey); // Debug log
-
+      AppLogger.info('Fetched sheet config: $sheets'); // Debug log
+      //format data to SheetConfigEntity
+      final spreadsheet = SheetConfigEntity.fromJson(sheets);
       return SheetConfigState(
         listCreditNumber: listCreditNumberDefault.map((tc) => ListTC(content: tc)).toList(),
-        spreadsheet: sheets,
+        spreadsheet: spreadsheet,
       );
     } catch (e) {
       return SheetConfigState(spreadsheet: SheetConfigEntity.empty(), listCreditNumber: []);
