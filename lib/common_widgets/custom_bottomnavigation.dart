@@ -91,7 +91,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOutCubic,
-              padding: EdgeInsets.symmetric(horizontal: isActive ? 14.w : 12.w, vertical: 6.h),
+              padding: EdgeInsets.symmetric(horizontal: isActive ? 14.w : 1.w, vertical: 6.h),
               decoration: BoxDecoration(
                 color: isActive ? const Color(0xFF545C8C) : Colors.transparent,
                 borderRadius: BorderRadius.circular(40),

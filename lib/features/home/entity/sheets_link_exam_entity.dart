@@ -53,7 +53,9 @@ class SheetLinkExamEntity {
   /// Tìm item theo số tín chỉ
   SheetLinkExamItem? findByCredit(String credit) {
     try {
-      return items.firstWhere((e) => e.creditNumber?.tcNumber == credit.tcNumber);
+      return items.firstWhere(
+        (e) => e.creditNumber?.formatCreditNumber == credit.formatCreditNumber,
+      );
     } catch (_) {
       return null;
     }

@@ -17,9 +17,6 @@ class GetTodayScheduleProvider extends AsyncNotifier<List<ListTC>> {
 
       final tcList = configSheets.spreadsheet.getListTCByPosition(currentPosition);
 
-      print('Position: $currentPosition');
-      print('TC list: $tcList');
-
       final List<ListTC> schedule = tcList.map((tc) => ListTC(content: tc)).toList();
 
       return schedule;

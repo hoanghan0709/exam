@@ -67,34 +67,56 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                   //infor
                   Expanded(
                     child: Column(
+                      spacing: 8.h,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           user.name ?? 'Unknown',
                           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.h),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Vị trí',
-                                style: const TextStyle(fontSize: 14, color: Colors.grey),
-                              ),
-                              staffInfoAsync.when(
-                                loading: () => const SizedBox.shrink(),
-                                error: (e, _) => const SizedBox.shrink(),
-                                data: (staffInfoState) {
-                                  final staffInfo = staffInfoState.staffInfo;
-                                  return Text(staffInfo.position?.value ?? 'Không có vị trí');
-                                },
-                              ),
-                            ],
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Vị trí',
+                              style: const TextStyle(fontSize: 14, color: Colors.grey),
+                            ),
+                            staffInfoAsync.when(
+                              loading: () => const SizedBox.shrink(),
+                              error: (e, _) => const SizedBox.shrink(),
+                              data: (staffInfoState) {
+                                final staffInfo = staffInfoState.staffInfo;
+                                return Text(staffInfo.position?.value ?? 'Không có vị trí');
+                              },
+                            ),
+                          ],
                         ),
-                        Text('Email', style: const TextStyle(fontSize: 14, color: Colors.grey)),
-                        Text(user.email ?? 'Không có email'),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Email', style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                            Text(user.email ?? 'Không có email'),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Lộ trình',
+                              style: const TextStyle(fontSize: 14, color: Colors.grey),
+                            ),
+                            staffInfoAsync.when(
+                              loading: () => const SizedBox.shrink(),
+                              error: (e, _) => const SizedBox.shrink(),
+                              data: (staffInfoState) {
+                                final staffInfo = staffInfoState.staffInfo;
+                                return Text(staffInfo.roadmap?.value ?? 'Không có vị trí');
+                              },
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),

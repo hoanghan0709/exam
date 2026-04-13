@@ -1,11 +1,18 @@
 import 'package:exam/export.dart';
+import 'package:exam/features/home/controller/get_today_schedule_provider.dart';
 import 'package:exam/utils/ext_formatter.dart';
 
 class MergedTCResult {
   final List<ListTC> missingTC; // TC còn thiếu
   final List<ListTC> passedTC; // TC đã đạt
+  //check có nhập sai TC của vị trí khác hay không
+  final bool isWrongPosition; // TC đã đạt
 
-  const MergedTCResult({this.missingTC = const [], this.passedTC = const []});
+  const MergedTCResult({
+    this.missingTC = const [],
+    this.passedTC = const [],
+    this.isWrongPosition = false,
+  });
 }
 
 /// Derived provider — tự động combine config + linkExam
@@ -15,27 +22,43 @@ final mergedTCProvider = FutureProvider.autoDispose<MergedTCResult>((ref) async 
   final staffInfo = await ref.watch(getStaffInfoProvider.future);
   final configState = await ref.watch(getConfigSheetsProvider.future);
   final linkExamState = await ref.watch(getLinkExamSheetsProvider.future);
+  //Tín chỉ của vị trí (position)
+  final listCreditPosition = await ref.watch(getTodayScheduleProvider.future);
 
   // 1. Lọc missingCredits
   List<String> missingCredits =
       staffInfo.staffInfo.missingCredits?.split(',').map((e) => e.trim()).toList() ?? [];
 
+  if (missingCredits.isEmpty) return MergedTCResult(missingTC: [], passedTC: []);
+
   // TC còn thiếu
   final filteredMissing =
       configState.listCreditNumber.where((tc) {
-        return missingCredits.any((e) => e.tcNumber == tc.content?.tcNumber);
+        return missingCredits.any((e) => e.formatCreditNumber == tc.content?.formatCreditNumber);
       }).toList();
+
+  // 2. Lấy set mã TC hợp lệ theo vị trí
+  final validTCNumbers = listCreditPosition.map((tc) => tc.content?.formatCreditNumber).toSet();
+
+  // 3. Kiểm tra có TC nào user nhập mà không hợp lệ không?
+  final invalidMissing =
+      missingCredits.where((e) => !validTCNumbers.contains(e.formatCreditNumber)).toList();
+
+  if (invalidMissing.isNotEmpty) {
+    // Có TC không hợp lệ → cảnh báo
+    return MergedTCResult(missingTC: [], passedTC: [], isWrongPosition: true);
+  }
 
   // TC đã đạt
   final filteredPassed =
-      configState.listCreditNumber.where((tc) {
-        return !missingCredits.any((e) => e.tcNumber == tc.content?.tcNumber);
+      listCreditPosition.where((tc) {
+        return !missingCredits.any((e) => e.formatCreditNumber == tc.content?.formatCreditNumber);
       }).toList();
 
   //2.Merge linkExam vào listTC đã lọc missingCredits để map link tương ứng
   final linkExamSheet = linkExamState.spreadsheet;
 
-  List<ListTC> _mergeWithLink(List<ListTC> list) {
+  List<ListTC> mergeWithLink(List<ListTC> list) {
     return list.map((configItem) {
       final matched = linkExamSheet.findByCredit(configItem.content ?? '');
       return ListTC(
@@ -48,8 +71,8 @@ final mergedTCProvider = FutureProvider.autoDispose<MergedTCResult>((ref) async 
   }
 
   return MergedTCResult(
-    missingTC: _mergeWithLink(filteredMissing),
-    passedTC: _mergeWithLink(filteredPassed),
+    missingTC: mergeWithLink(filteredMissing),
+    passedTC: mergeWithLink(filteredPassed),
   );
 });
 

@@ -1,5 +1,6 @@
 import 'package:exam/export.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class MainScreen extends ConsumerWidget {
   final StatefulNavigationShell shell;
@@ -20,22 +21,22 @@ class MainScreen extends ConsumerWidget {
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(LucideIcons.house),
             label: 'Trang chủ',
             backgroundColor: Colors.red,
-            activeIcon: Icon(Icons.home, color: Colors.white),
+            activeIcon: Icon(LucideIcons.house, color: Colors.white),
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.person),
-          //   label: 'Lịch trình\n kết quả',
-          //   backgroundColor: Colors.red,
-          //   activeIcon: Icon(Icons.person, color: Colors.white),
-          // ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(LucideIcons.listChecks),
+            label: 'Tín chỉ đạt',
+            backgroundColor: Colors.red,
+            activeIcon: Icon(LucideIcons.listChecks, color: Colors.white),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(LucideIcons.userRound),
             label: 'Thông tin',
             backgroundColor: Colors.red,
-            activeIcon: Icon(Icons.person, color: Colors.white),
+            activeIcon: Icon(LucideIcons.userRound, color: Colors.white),
           ),
         ],
       ),

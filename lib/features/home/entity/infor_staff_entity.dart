@@ -6,7 +6,7 @@ enum EnumPosition {
   waiter('ĐI THỰC'),
   cleaner('TẠP VỤ'),
   bar('BAR'),
-  cskh('CHĂM SÓC KHÁCH HÀNG'),
+  cskh('CSKH'),
   manager('QUẢN LÝ');
 
   final String displayName;

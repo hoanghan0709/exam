@@ -23,6 +23,7 @@ enum AppPaths {
   dashboard('/', 'Dashboard'),
   login('/login', 'Login'),
   register('/register', 'Register'),
+  creditPassed('/credit_passed', 'Credit Passed'),
   searchListings('/listings', 'Search Listings'),
   profile('/profile', 'Profile'),
   moreScreen('/more_screen', 'More Screen'),

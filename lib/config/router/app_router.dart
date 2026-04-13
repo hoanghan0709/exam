@@ -1,3 +1,4 @@
+import 'package:exam/features/credit_passed/widgets/credit_passed_screen.dart';
 import 'package:exam/features/login/entity/google_entity.dart';
 import 'package:exam/features/login/login_email_screen.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +58,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: AppPaths.dashboard.path,
                 name: AppPaths.dashboard.pathName,
                 builder: (context, state) => const DashboardScreen(),
+              ),
+            ],
+          ),
+
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppPaths.creditPassed.path,
+                name: AppPaths.creditPassed.pathName,
+                builder: (context, state) => const CreditPassedScreen(),
+                pageBuilder:
+                    (context, state) =>
+                        NoTransitionPage(key: state.pageKey, child: const CreditPassedScreen()),
               ),
             ],
           ),

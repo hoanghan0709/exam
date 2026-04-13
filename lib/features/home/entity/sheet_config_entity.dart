@@ -1,5 +1,4 @@
 // // create object for this json
-import 'package:exam/features/home/controller/get_sheet_config_provider.dart';
 
 class SheetConfigEntity {
   final String? range;
