@@ -16,6 +16,7 @@ class CardInforCreditWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPassed = score.contains('Đã đạt');
     return PressableWidget(
       onPressed: () {
         onPressed?.call();
@@ -24,9 +25,9 @@ class CardInforCreditWidget extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
+          color: context.colors.cardBackground.withOpacity(0.9),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+          border: Border.all(color: context.colors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,29 +36,28 @@ class CardInforCreditWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               spacing: 4.w,
               children: [
-                Text('Nội dung:', style: const TextStyle(fontSize: 10, color: Color(0xFF5E5E68))),
-                Expanded(
-                  child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                ),
+                Text('Nội dung:', style: context.textStyles.labelSmall),
+                Expanded(child: Text(title, style: context.textStyles.bodyBold)),
               ],
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(date, style: const TextStyle(fontSize: 10, color: Color(0xFF5E5E68))),
+                Text(date, style: context.textStyles.labelSmall),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade100,
+                    color:
+                        isPassed
+                            ? context.colors.success.withOpacity(0.15)
+                            : context.colors.info.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     score,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
+                    style: context.textStyles.badge.copyWith(
+                      color: isPassed ? context.colors.success : context.colors.info,
                     ),
                   ),
                 ),

@@ -20,7 +20,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
       if (wasLoggedIn && isLoggedOut && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: Colors.red.shade300,
+            backgroundColor: context.colors.error,
             behavior: SnackBarBehavior.floating,
             content: Text('Đã đăng xuất'),
           ),
@@ -39,7 +39,6 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
             spacing: 16.h,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 4.h),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 20.w,
@@ -56,8 +55,12 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                           (context, error, stackTrace) => Container(
                             width: 140,
                             height: 180,
-                            color: Colors.grey.shade300,
-                            child: const Icon(Icons.person, size: 80, color: Colors.white),
+                            color: context.colors.border,
+                            child: Icon(
+                              Icons.person,
+                              size: 80,
+                              color: context.colors.cardBackground,
+                            ),
                           ),
                     ),
                   ),
@@ -69,15 +72,12 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                       children: [
                         Text(
                           user.name ?? 'Unknown',
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: context.textStyles.title.copyWith(fontSize: 20),
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Vị trí',
-                              style: const TextStyle(fontSize: 14, color: Colors.grey),
-                            ),
+                            Text('Vị trí', style: context.textStyles.body),
                             staffInfoAsync.when(
                               loading: () => const SizedBox.shrink(),
                               error: (e, _) => const SizedBox.shrink(),
@@ -92,7 +92,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Email', style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                            Text('Email', style: context.textStyles.body),
                             Text(user.email ?? 'Không có email'),
                           ],
                         ),
@@ -100,10 +100,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Lộ trình',
-                              style: const TextStyle(fontSize: 14, color: Colors.grey),
-                            ),
+                            Text('Lộ trình', style: context.textStyles.body),
                             staffInfoAsync.when(
                               loading: () => const SizedBox.shrink(),
                               error: (e, _) => const SizedBox.shrink(),
@@ -134,7 +131,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                           if (listCreditNumber.missingTC.isNotEmpty)
                             Text(
                               'Tín chỉ còn thiếu (${listCreditNumber.missingTC.length})',
-                              style: const TextStyle(fontSize: 14, color: Colors.grey),
+                              style: context.textStyles.body,
                             ),
                           Wrap(
                             spacing: 8.h,
@@ -146,12 +143,14 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                   margin: const EdgeInsets.symmetric(vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: Colors.blueAccent.withOpacity(0.1),
+                                    color: context.colors.info.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
                                     item.content.toString(),
-                                    style: const TextStyle(color: Colors.blueAccent, fontSize: 14),
+                                    style: context.textStyles.bodyBold.copyWith(
+                                      color: context.colors.info,
+                                    ),
                                   ),
                                 ),
                             ],

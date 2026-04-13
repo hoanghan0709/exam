@@ -32,7 +32,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   color: Theme.of(context).colorScheme.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: context.colors.textPrimary.withOpacity(0.1),
                       blurRadius: 8.r,
                       offset: Offset(0, 4.r),
                     ),
@@ -106,7 +106,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       color: Colors.white,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
+                                          color: context.colors.textPrimary.withOpacity(0.1),
                                           blurRadius: 4.r,
                                           offset: Offset(0, 2.r),
                                         ),
@@ -115,7 +115,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     child: FaIcon(
                                       FontAwesomeIcons.google,
                                       size: 20.r,
-                                      color: Colors.red,
+                                      color: context.colors.error,
                                     ),
                                   ),
                               ],

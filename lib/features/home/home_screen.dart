@@ -72,7 +72,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                         TextSpan(
                                           text: 'Lộ trình dành cho',
                                           style: context.textStyles.fieldLabel.copyWith(
-                                            color: Colors.grey,
+                                            color: context.colors.textSecondary,
                                             wordSpacing: 1,
                                             fontSize: 16,
                                           ),
@@ -80,7 +80,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                         TextSpan(
                                           text: ' NHÂN VIÊN MỚI',
                                           style: context.textStyles.fieldLabel.copyWith(
-                                            color: Colors.black,
+                                            color: context.colors.textPrimary,
                                             wordSpacing: 1,
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -96,18 +96,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                         const TextSpan(text: 'Bạn phải đạt '),
                                         TextSpan(
                                           text: '${timeline.totalCredit}',
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
+                                          style: TextStyle(fontWeight: FontWeight.bold),
                                         ),
                                         TextSpan(text: ' tín chỉ đến ngày '),
                                         TextSpan(
                                           text: '${timeline.timeline} ',
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
+                                          style: TextStyle(fontWeight: FontWeight.bold),
                                         ),
                                         TextSpan(text: 'để hoàn thành lộ trình dành cho'),
                                         TextSpan(
                                           text:
                                               ' ${staffInfoAsync.value?.staffInfo.roadmap?.mappedValue.toUpperCase() ?? ''}',
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
+                                          style: TextStyle(fontWeight: FontWeight.bold),
                                         ),
                                       ],
                                     ),
@@ -146,10 +146,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   children: [
                                     Text(
                                       "Tín chỉ còn thiếu ($missing/$total)",
-                                      style: GoogleFonts.manrope(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
+                                      style: context.textStyles.title,
                                     ),
                                     Text("(Chọn để học ngay)", style: context.textStyles.body),
                                   ],
@@ -220,15 +217,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           },
                                           icon: Icon(
                                             _showAll ? Icons.expand_less : Icons.expand_more,
-                                            color: const Color(0xFF545C8C),
+                                            color: context.colors.primary,
                                           ),
                                           label: Text(
                                             _showAll
                                                 ? 'Thu gọn'
                                                 : 'Xem thêm (${listCreditNumber.missingTC.length - _maxItems} còn lại)',
-                                            style: const TextStyle(
-                                              color: Color(0xFF545C8C),
-                                              fontWeight: FontWeight.bold,
+                                            style: context.textStyles.bodyBold.copyWith(
+                                              color: context.colors.primary,
                                             ),
                                           ),
                                         ),
@@ -329,13 +325,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               style: GoogleFonts.manrope(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF31323B),
+                                color: context.colors.textPrimary,
                               ),
                               children: [
                                 TextSpan(text: 'Chào bạn, '),
                                 TextSpan(
                                   text: '${staffInfoAsync.value!.staffInfo.name?.extractString}!',
-                                  style: TextStyle(color: Color(0xFF545C8C)),
+                                  style: TextStyle(color: context.colors.primary),
                                 ),
                               ],
                             ),
@@ -377,7 +373,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               Text(
                 'Thông tin nhân viên',
                 style: GoogleFonts.manrope(
-                  color: const Color(0xFF545C8C),
+                  color: context.colors.primary,
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
@@ -395,7 +391,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         Text(title),
         Text(
           ' ${staffInfo?.toUpperCase() ?? 'Không xác định'}',
-          style: context.textStyles.body.copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+          style: context.textStyles.body.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.colors.textPrimary,
+          ),
         ),
       ],
     );

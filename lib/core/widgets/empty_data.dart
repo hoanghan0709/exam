@@ -14,10 +14,10 @@ class EmptyDataWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         spacing: 22.h,
         children: [
-          Icon(LucideIcons.databaseSearch, color: Colors.grey, size: 80),
+          Icon(LucideIcons.databaseSearch, color: context.colors.textSecondary, size: 80),
           Text(
             message ?? 'Bạn không thiếu tín chỉ nào!',
-            style: context.textStyles.body.copyWith(color: Colors.grey),
+            style: context.textStyles.body.copyWith(color: context.colors.textSecondary),
           ),
         ],
       ),

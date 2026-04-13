@@ -44,24 +44,24 @@ class CreditPassedScreen extends ConsumerWidget {
                           Column(
                             spacing: 16.h,
                             children: [
-                              Icon(LucideIcons.circleCheck300, color: Colors.green, size: 80.w),
+                              Icon(
+                                LucideIcons.circleCheck300,
+                                color: context.colors.success,
+                                size: 80.w,
+                              ),
                               // SizedBox(height: 10.h),
                               Row(
                                 children: [
                                   Text(
                                     'Bạn đã hoàn thành $passedCount/$totalCount',
-                                    style: GoogleFonts.manrope(
-                                      fontWeight: FontWeight.bold,
+                                    style: context.textStyles.title.copyWith(
                                       color: context.colors.success,
-                                      fontSize: 18,
                                     ),
                                   ),
                                   Text(
                                     ' ($progress%)',
-                                    style: GoogleFonts.manrope(
-                                      fontWeight: FontWeight.bold,
+                                    style: context.textStyles.title.copyWith(
                                       color: context.colors.info,
-                                      fontSize: 18,
                                     ),
                                   ),
                                 ],
