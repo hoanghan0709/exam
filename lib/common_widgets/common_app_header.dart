@@ -1,8 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../gen/assets.gen.dart';
 
 class CommonAppHeader extends StatefulWidget implements PreferredSizeWidget {
   const CommonAppHeader({
@@ -51,7 +48,7 @@ class _CommonAppHeaderState extends State<CommonAppHeader> {
                   child: Center(
                     child: Text(
                       widget.title!,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500,)
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                     ),
                   ),
                 )

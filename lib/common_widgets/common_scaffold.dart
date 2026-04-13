@@ -1,5 +1,4 @@
 import 'package:exam/export.dart';
-import 'package:flutter/material.dart';
 
 class CommonScaffold extends StatefulWidget {
   const CommonScaffold({

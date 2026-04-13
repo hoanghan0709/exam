@@ -6,7 +6,7 @@ enum EnumPosition {
   waiter('ĐI THỰC'),
   cleaner('TẠP VỤ'),
   bar('BAR'),
-  cskh('CHĂM SÓC KHÁCH HÀNG'),
+  cskh('CSKH'),
   manager('QUẢN LÝ');
 
   final String displayName;
@@ -43,7 +43,17 @@ enum EnumRoadmap {
     );
   }
   //get value
-  String get value => displayRoadmap;
+  String get value1 => displayRoadmap;
+  //mapping with new name
+  String get mappedValue {
+    switch (this) {
+      case EnumRoadmap.newStaff:
+        return 'Nhân viên mới';
+      case EnumRoadmap.oldStaff:
+        return 'Nhân viên chính thức';
+    }
+  }
+
   //tojson to mapping data from enum to json
   String toJson() {
     return displayRoadmap;

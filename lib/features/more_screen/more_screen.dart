@@ -1,8 +1,6 @@
+import 'package:exam/common_widgets/common_button.dart';
 import 'package:exam/export.dart';
-import 'package:exam/features/login/entity/google_entity.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../common_widgets/common_scaffold.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class MoreScreen extends ConsumerStatefulWidget {
   const MoreScreen({super.key});
@@ -22,7 +20,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
       if (wasLoggedIn && isLoggedOut && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: Colors.red.shade300,
+            backgroundColor: context.colors.error,
             behavior: SnackBarBehavior.floating,
             content: Text('Đã đăng xuất'),
           ),
@@ -41,7 +39,6 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
             spacing: 16.h,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 4.h),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 20.w,
@@ -58,42 +55,64 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                           (context, error, stackTrace) => Container(
                             width: 140,
                             height: 180,
-                            color: Colors.grey.shade300,
-                            child: const Icon(Icons.person, size: 80, color: Colors.white),
+                            color: context.colors.border,
+                            child: Icon(
+                              Icons.person,
+                              size: 80,
+                              color: context.colors.cardBackground,
+                            ),
                           ),
                     ),
                   ),
                   //infor
                   Expanded(
                     child: Column(
+                      spacing: 8.h,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           user.name ?? 'Unknown',
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: context.textStyles.title.copyWith(fontSize: 20),
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.h),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Vị trí',
-                                style: const TextStyle(fontSize: 14, color: Colors.grey),
-                              ),
-                              staffInfoAsync.when(
-                                loading: () => const SizedBox.shrink(),
-                                error: (e, _) => const SizedBox.shrink(),
-                                data: (staffInfoState) {
-                                  final staffInfo = staffInfoState.staffInfo;
-                                  return Text(staffInfo.position?.value ?? 'Không có vị trí');
-                                },
-                              ),
-                            ],
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Vị trí', style: context.textStyles.body),
+                            staffInfoAsync.when(
+                              loading: () => const SizedBox.shrink(),
+                              error: (e, _) => const SizedBox.shrink(),
+                              data: (staffInfoState) {
+                                final staffInfo = staffInfoState.staffInfo;
+                                return Text(staffInfo.position?.value ?? 'Không có vị trí');
+                              },
+                            ),
+                          ],
                         ),
-                        Text('Email', style: const TextStyle(fontSize: 14, color: Colors.grey)),
-                        Text(user.email ?? 'Không có email'),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Email', style: context.textStyles.body),
+                            Text(user.email ?? 'Không có email'),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Lộ trình', style: context.textStyles.body),
+                            staffInfoAsync.when(
+                              loading: () => const SizedBox.shrink(),
+                              error: (e, _) => const SizedBox.shrink(),
+                              data: (staffInfoState) {
+                                final staffInfo = staffInfoState.staffInfo;
+                                return Text(
+                                  staffInfo.roadmap?.mappedValue.toUpperCase() ?? 'Không có vị trí',
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -109,27 +128,29 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (listCreditNumber.isNotEmpty)
+                          if (listCreditNumber.missingTC.isNotEmpty)
                             Text(
-                              'Tín chỉ còn thiếu (${listCreditNumber.length ?? 0})',
-                              style: const TextStyle(fontSize: 14, color: Colors.grey),
+                              'Tín chỉ còn thiếu (${listCreditNumber.missingTC.length})',
+                              style: context.textStyles.body,
                             ),
                           Wrap(
                             spacing: 8.h,
                             children: [
-                              for (var item in listCreditNumber)
+                              for (var item in listCreditNumber.missingTC)
                                 Container(
                                   width: 70,
                                   alignment: Alignment.center,
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                   margin: const EdgeInsets.symmetric(vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: Colors.blueAccent.withOpacity(0.1),
+                                    color: context.colors.info.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
                                     item.content.toString(),
-                                    style: const TextStyle(color: Colors.blueAccent, fontSize: 14),
+                                    style: context.textStyles.bodyBold.copyWith(
+                                      color: context.colors.info,
+                                    ),
                                   ),
                                 ),
                             ],
@@ -138,15 +159,17 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                       );
                     },
                   ),
-              _buildButtonLogOut(),
               SizedBox(height: 40.h),
+              Row(children: [Expanded(child: _buildButtonLogOut())]),
             ],
           ),
     );
   }
 
-  ElevatedButton _buildButtonLogOut() {
-    return ElevatedButton(
+  Widget _buildButtonLogOut() {
+    return CommonButton(
+      height: 60,
+      radius: 22,
       onPressed: () async {
         await ref.read(googleSignInProvider.notifier).signOut();
       },
@@ -154,8 +177,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
         mainAxisSize: MainAxisSize.min,
         spacing: 8,
         children: [
-          Icon(Icons.power_settings_new, color: Colors.redAccent),
-          const Text('Đăng xuất', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          Icon(LucideIcons.logOut, color: Colors.white),
+          Text('Đăng xuất', style: context.textStyles.buttonLabel.copyWith(color: Colors.white)),
         ],
       ),
     );

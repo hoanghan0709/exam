@@ -30,7 +30,8 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color info;
 
   static const light = AppColors(
-    primary: Color(0xFF3D4F3F),
+    primary: Color(0xFF545C8C),
+    // primary: Color(0xFF3D4F3F),
     accent: Color(0xFFD9B382),
     background: Color(0xFFFCFAF7),
     cardBackground: Colors.white,
@@ -45,7 +46,7 @@ class AppColors extends ThemeExtension<AppColors> {
   );
 
   static const dark = AppColors(
-    primary: Color(0xFF5A7A5A),
+    primary: Color(0xFF545C8C),
     accent: Color(0xFFD9B382),
     background: Color(0xFF1A1C1A),
     cardBackground: Color(0xFF212121),

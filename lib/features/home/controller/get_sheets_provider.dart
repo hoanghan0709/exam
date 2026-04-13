@@ -31,7 +31,7 @@ class GetSheetsProvider extends AsyncNotifier<GetSheetState> {
       //convert gridRange to A1 notation
       final gridRange = _convertToA1Notation(sheets);
 
-      print('Fetched sheets: $gridRange'); // Debug log
+      AppLogger.debug('Fetched sheets: $gridRange'); // Debug log
       return GetSheetState(spreadsheet: sheets, gridRange: gridRange);
     } catch (e) {
       return GetSheetState(spreadsheet: SpreadsheetEntity.empty(), gridRange: []);

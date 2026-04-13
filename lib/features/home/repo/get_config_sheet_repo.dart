@@ -1,5 +1,6 @@
 //use apiclient to get list sheets
 
+import 'package:dio/dio.dart';
 import 'package:exam/export.dart';
 
 class GetConfigSheetsRepo {
@@ -7,9 +8,9 @@ class GetConfigSheetsRepo {
 
   GetConfigSheetsRepo(this._apiClient);
 
-  Future<SheetConfigEntity> call({String? sheetName}) async {
+  Future<Map<String, dynamic>> call({String? sheetName}) async {
     try {
-      late final response;
+      late final Response response;
 
       if (sheetName != null) {
         response = await _apiClient.get(
@@ -19,7 +20,8 @@ class GetConfigSheetsRepo {
       if (response.statusCode == 200) {
         // Giả sử API trả về một list tên sheet
         AppLogger.info('Response data GetListSheetsRepo: ${response.data}'); // Debug log
-        return SheetConfigEntity.fromJson(response.data);
+        // return SheetConfigEntity.fromJson(response.data);
+        return response.data;
       } else {
         throw Exception('Failed to load sheets');
       }
