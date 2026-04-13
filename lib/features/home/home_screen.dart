@@ -330,7 +330,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               children: [
                                 TextSpan(text: 'Chào bạn, '),
                                 TextSpan(
-                                  text: '${staffInfoAsync.value!.staffInfo.name?.extractString}!',
+                                  text:
+                                      staffInfoAsync.value!.staffInfo.name?.extractString ??
+                                      "Không xác định",
                                   style: TextStyle(color: context.colors.primary),
                                 ),
                               ],

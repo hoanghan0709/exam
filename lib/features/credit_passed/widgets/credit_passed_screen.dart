@@ -23,7 +23,7 @@ class CreditPassedScreen extends ConsumerWidget {
                   loading: () => const ShimmerSheetsSection(),
                   data: (listCreditNumber) {
                     final passedCount = listCreditNumber.passedTC.length;
-                    final totalCount = todayScheduleState.value?.length ?? 0;
+                    final totalCount = todayScheduleState.value?.length ?? -1;
                     final progress = (passedCount / totalCount * 100).clamp(0, 100).ceil();
 
                     return Container(
