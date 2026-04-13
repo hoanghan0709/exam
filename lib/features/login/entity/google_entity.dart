@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:exam/core/service/secure_storage_service.dart';
-import 'package:exam/features/home/controller/get_staff_provider.dart';
-import 'package:exam/features/home/controller/merged_home_provider.dart';
+import 'package:exam/utils/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -69,7 +68,7 @@ class UserModelNotifier extends AsyncNotifier<UserModel> {
     //read user from storage
     final userJson = await service.read(StorageKeys.userLogged);
     if (userJson != null) {
-      print('User loaded from storage: ${UserModel.fromRawJson(userJson)}');
+      AppLogger.info('User loaded from storage: ${UserModel.fromRawJson(userJson)}');
     }
   }
 
@@ -84,8 +83,6 @@ class UserModelNotifier extends AsyncNotifier<UserModel> {
 final userModelProvider = AsyncNotifierProvider<UserModelNotifier, UserModel>(
   UserModelNotifier.new,
 );
-
-const List<String> _scopes = <String>['https://www.googleapis.com/auth/contacts.readonly'];
 
 const String _clientId = "613237324796-4kjqlph2tsimoms268t2kiq5nonra2gu.apps.googleusercontent.com";
 const String _serverClientId =

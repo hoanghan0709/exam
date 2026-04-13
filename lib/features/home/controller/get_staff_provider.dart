@@ -18,7 +18,7 @@ class GetStaffInfoProvider extends AsyncNotifier<GetStaffInfoState> {
     final sheetsState = await ref.watch(getSheetsProvider.future);
     final gridRange = sheetsState.gridRange;
 
-    print('gridRange in GetStaffInfoProvider: $gridRange'); // Debug log
+    AppLogger.info('gridRange in GetStaffInfoProvider: $gridRange'); // Debug log
 
     if (gridRange.isEmpty) {
       return GetStaffInfoState(staffInfo: const InforStaffEntity.empty());

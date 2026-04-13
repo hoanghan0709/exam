@@ -1,5 +1,4 @@
 import 'package:exam/export.dart';
-import 'package:flutter/material.dart';
 
 class CardInforCreditWidget extends StatelessWidget {
   final String title;
@@ -8,12 +7,12 @@ class CardInforCreditWidget extends StatelessWidget {
   final VoidCallback? onPressed;
 
   const CardInforCreditWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.date,
     required this.score,
     this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

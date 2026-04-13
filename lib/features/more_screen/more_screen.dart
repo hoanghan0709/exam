@@ -1,9 +1,6 @@
 import 'package:exam/common_widgets/common_button.dart';
 import 'package:exam/export.dart';
-import 'package:exam/features/login/entity/google_entity.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../common_widgets/common_scaffold.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class MoreScreen extends ConsumerStatefulWidget {
   const MoreScreen({super.key});
@@ -112,7 +109,9 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                               error: (e, _) => const SizedBox.shrink(),
                               data: (staffInfoState) {
                                 final staffInfo = staffInfoState.staffInfo;
-                                return Text(staffInfo.roadmap?.value ?? 'Không có vị trí');
+                                return Text(
+                                  staffInfo.roadmap?.mappedValue.toUpperCase() ?? 'Không có vị trí',
+                                );
                               },
                             ),
                           ],
@@ -134,7 +133,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                         children: [
                           if (listCreditNumber.missingTC.isNotEmpty)
                             Text(
-                              'Tín chỉ còn thiếu (${listCreditNumber.missingTC.length ?? 0})',
+                              'Tín chỉ còn thiếu (${listCreditNumber.missingTC.length})',
                               style: const TextStyle(fontSize: 14, color: Colors.grey),
                             ),
                           Wrap(
@@ -161,8 +160,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                       );
                     },
                   ),
-              Row(children: [Expanded(child: _buildButtonLogOut())]),
               SizedBox(height: 40.h),
+              Row(children: [Expanded(child: _buildButtonLogOut())]),
             ],
           ),
     );
@@ -170,7 +169,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
 
   Widget _buildButtonLogOut() {
     return CommonButton(
-      height: 50,
+      height: 60,
       radius: 22,
       onPressed: () async {
         await ref.read(googleSignInProvider.notifier).signOut();
@@ -179,7 +178,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
         mainAxisSize: MainAxisSize.min,
         spacing: 8,
         children: [
-          Icon(Icons.power_settings_new, color: Colors.redAccent),
+          Icon(LucideIcons.logOut, color: Colors.white),
           Text('Đăng xuất', style: context.textStyles.buttonLabel.copyWith(color: Colors.white)),
         ],
       ),

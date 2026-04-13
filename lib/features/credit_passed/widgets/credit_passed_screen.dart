@@ -110,7 +110,9 @@ class CreditPassedScreen extends ConsumerWidget {
       //show Toast Notifier
 
       String errorMessage = 'Không thể mở link này, vui lòng thử lại sau.';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+      }
     }
   }
 }

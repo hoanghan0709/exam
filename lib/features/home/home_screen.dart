@@ -7,7 +7,6 @@ import 'package:exam/features/home/controller/get_sheets_timeline_provider.dart'
 import 'package:exam/features/home/controller/get_today_schedule_provider.dart';
 import 'package:exam/features/home/widgets/slivder_gap.dart';
 import 'package:exam/utils/ext_formatter.dart';
-import 'package:intl/intl.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -107,7 +106,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                         TextSpan(text: 'để hoàn thành lộ trình dành cho'),
                                         TextSpan(
                                           text:
-                                              ' ${staffInfoAsync.value?.staffInfo.roadmap?.value.toUpperCase() ?? ''}',
+                                              ' ${staffInfoAsync.value?.staffInfo.roadmap?.mappedValue.toUpperCase() ?? ''}',
                                           style: const TextStyle(fontWeight: FontWeight.bold),
                                         ),
                                       ],
@@ -356,7 +355,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       inforRowCard(staffInfo.staffInfo.position?.value, context, 'Vị trí •'),
                       inforRowCard(staffInfo.staffInfo.startDate, context, 'Ngày vào làm •'),
                       inforRowCard(staffInfo.staffInfo.totalDays, context, 'Số ngày đã làm•'),
-                      inforRowCard(staffInfo.staffInfo.roadmap?.value, context, 'Lộ trình •'),
+                      inforRowCard(staffInfo.staffInfo.roadmap?.mappedValue, context, 'Lộ trình •'),
                     ],
                   );
                 },
@@ -395,7 +394,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       children: [
         Text(title),
         Text(
-          ' ${staffInfo ?? 'Không xác định'}',
+          ' ${staffInfo?.toUpperCase() ?? 'Không xác định'}',
           style: context.textStyles.body.copyWith(fontWeight: FontWeight.w700, color: Colors.black),
         ),
       ],

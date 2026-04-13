@@ -43,7 +43,17 @@ enum EnumRoadmap {
     );
   }
   //get value
-  String get value => displayRoadmap;
+  String get value1 => displayRoadmap;
+  //mapping with new name
+  String get mappedValue {
+    switch (this) {
+      case EnumRoadmap.newStaff:
+        return 'Nhân Viên MỚI';
+      case EnumRoadmap.oldStaff:
+        return 'Nhân Viên CŨ';
+    }
+  }
+
   //tojson to mapping data from enum to json
   String toJson() {
     return displayRoadmap;
