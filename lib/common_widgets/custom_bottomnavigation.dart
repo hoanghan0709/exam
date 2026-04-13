@@ -46,34 +46,40 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      height: 80.h,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 24,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          for (int i = 0; i < widget.items.length; i++)
-            InkWell(
-              onTap: () => widget.onTabChanged(i),
-              child: _buildNavItem(
-                widget.items[i].icon,
-                widget.items[i].activeIcon,
-                widget.items[i].label ?? "",
-                i == widget.currentIndex,
-              ),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        height: 60.h,
+        margin: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom + 16.h),
+        padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(40),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 24,
+              offset: const Offset(0, -4),
             ),
-        ],
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (int i = 0; i < widget.items.length; i++)
+              InkWell(
+                onTap: () => widget.onTabChanged(i),
+                child: _buildNavItem(
+                  widget.items[i].icon,
+                  widget.items[i].activeIcon,
+                  widget.items[i].label ?? "",
+                  i == widget.currentIndex,
+                ),
+              ),
+            // Icon(Icons.search),
+          ],
+        ),
       ),
     );
   }

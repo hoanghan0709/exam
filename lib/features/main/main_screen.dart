@@ -13,7 +13,7 @@ class MainScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return CommonScaffold(
       body: shell,
-      extendBody: false,
+      extendBody: true,
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: shell.currentIndex,
         onTabChanged: (index) {
@@ -21,19 +21,19 @@ class MainScreen extends ConsumerWidget {
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(LucideIcons.house),
+            icon: Icon(LucideIcons.house, color: Colors.grey),
             label: 'Trang chủ',
             backgroundColor: Colors.red,
             activeIcon: Icon(LucideIcons.house, color: Colors.white),
           ),
           BottomNavigationBarItem(
-            icon: Icon(LucideIcons.listChecks),
+            icon: Icon(LucideIcons.listChecks, color: Colors.grey),
             label: 'Tín chỉ đạt',
             backgroundColor: Colors.red,
             activeIcon: Icon(LucideIcons.listChecks, color: Colors.white),
           ),
           BottomNavigationBarItem(
-            icon: Icon(LucideIcons.userRound),
+            icon: Icon(LucideIcons.userRound, color: Colors.grey),
             label: 'Thông tin',
             backgroundColor: Colors.red,
             activeIcon: Icon(LucideIcons.userRound, color: Colors.white),

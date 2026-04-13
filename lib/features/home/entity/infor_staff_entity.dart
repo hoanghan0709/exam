@@ -48,9 +48,9 @@ enum EnumRoadmap {
   String get mappedValue {
     switch (this) {
       case EnumRoadmap.newStaff:
-        return 'Nhân Viên MỚI';
+        return 'Nhân viên mới';
       case EnumRoadmap.oldStaff:
-        return 'Nhân Viên CŨ';
+        return 'Nhân viên chính thức';
     }
   }
 
