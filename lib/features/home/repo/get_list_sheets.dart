@@ -5,12 +5,12 @@ class GetListSheetsRepo {
 
   GetListSheetsRepo(this._apiClient);
 
-  Future<SpreadsheetEntity> call() async {
+  Future<SpreadsheetEntity> call({required String domain}) async {
     try {
-      final response = await _apiClient.get('/${AppConst.keySheet}?key=${AppConst.apiKey}');
+      final response = await _apiClient.get('/$domain?key=${AppConst.apiKey}');
       if (response.statusCode == 200) {
         // Giả sử API trả về một list tên sheet
-        AppLogger.info('Response data GetListSheetsRepo: ${response.data}'); // Debug log
+        AppLogger.logD('Response data GetListSheetsRepo: ${response.data}'); // Debug log
         return SpreadsheetEntity.fromJson(response.data);
       } else {
         throw Exception('Failed to load sheets');

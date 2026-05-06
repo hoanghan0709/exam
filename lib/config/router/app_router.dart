@@ -54,9 +54,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state, shell) {
           return shell;
         },
-        // builder: (context, state, shell) {
-        //   return MainScreen(shell: shell);
-        // },
         branches: [
           StatefulShellBranch(
             routes: [

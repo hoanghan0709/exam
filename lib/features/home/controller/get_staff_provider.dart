@@ -35,13 +35,25 @@ class GetStaffInfoProvider extends AsyncNotifier<GetStaffInfoState> {
     final getRepository = ref.read(getInforStaffProvider);
 
     try {
-      // Gọi API lấy dữ liệu sheet — dùng gridRange đầu tiên (sheet "Thông tin")
-      final staffInfo = await getRepository.callByEmail(
-        gridRange: gridRange.first,
-        email: userEmail,
-      );
+      InforStaffEntity? staffInfo;
 
-      print('Fetched staff info: $staffInfo');
+      // Dừng ngay khi tìm thấy kết quả hợp lệ — không gọi thừa API
+      outer:
+      for (final range in gridRange) {
+        for (final apiKey in AppConst.apiKeys) {
+          AppLogger.debug('Trying range: $range | apiKey: $apiKey');
+          final result = await getRepository.callByEmail(
+            gridRange: range,
+            email: userEmail,
+            domain: apiKey,
+          );
+          if (result?.name?.isNotEmpty == true) {
+            AppLogger.debug('Found staff: ${result?.name}');
+            staffInfo = result;
+            break outer; // ← Thoát cả 2 vòng lặp ngay lập tức
+          }
+        }
+      }
 
       return GetStaffInfoState(staffInfo: staffInfo ?? const InforStaffEntity.empty());
     } catch (e) {

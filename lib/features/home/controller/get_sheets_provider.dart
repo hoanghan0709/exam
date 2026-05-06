@@ -2,16 +2,22 @@ import 'package:exam/export.dart';
 
 //define class GetSheetState include SpreadsheetEntity and String to get grid_range
 class GetSheetState {
-  final SpreadsheetEntity spreadsheet;
+  final SpreadsheetEntity? spreadsheet;
   final List<String> gridRange;
 
-  GetSheetState({required this.spreadsheet, required this.gridRange});
+  GetSheetState({this.spreadsheet, required this.gridRange});
   //copywith
   GetSheetState copyWith({SpreadsheetEntity? spreadsheet, List<String>? gridRange}) {
     return GetSheetState(
       spreadsheet: spreadsheet ?? this.spreadsheet,
       gridRange: gridRange ?? this.gridRange,
     );
+  }
+
+  String? get branchName {
+    var name = spreadsheet?.sheets?.firstOrNull?.tables?.firstOrNull?.name;
+    AppLogger.logD('Branch name: $spreadsheet');
+    return name;
   }
 }
 
@@ -24,15 +30,34 @@ class GetSheetsProvider extends AsyncNotifier<GetSheetState> {
 
   Future<GetSheetState> fetchSheets() async {
     state = const AsyncValue.loading();
-
+    List<String> gridRange = [];
+    // SpreadsheetEntity sheets = SpreadsheetEntity.empty();
+    // call api with List Sheets Repository
     final getRepository = ref.read(getListSheetsRepoProvider);
     try {
-      final sheets = await getRepository.call();
-      //convert gridRange to A1 notation
-      final gridRange = _convertToA1Notation(sheets);
+      // 1. Tạo một danh sách các Future (chưa await ngay)
+      final futures =
+          AppConst.apiKeys.map((item) async {
+            final result = await getRepository.call(domain: item);
+            AppLogger.logD('Fetching sheets for API key: $item');
+            AppLogger.logD('Fetching result : ${result.sheets?.toList()}');
+            return result;
+          }).toList();
 
-      AppLogger.debug('Fetched sheets: $gridRange'); // Debug log
-      return GetSheetState(spreadsheet: sheets, gridRange: gridRange);
+      // 2. Chạy tất cả cùng lúc và đợi kết quả cuối cùng
+      final results = await Future.wait(futures);
+
+      // 3. Xử lý kết quả sau khi tất cả đã xong
+      SpreadsheetEntity? mainSheet;
+      for (var result in results) {
+        if (result.sheets != null && result.sheets!.isNotEmpty) {
+          gridRange.addAll(_convertToA1Notation(result));
+          // Lấy spreadsheet đầu tiên có tables để hiển thị branchName
+          mainSheet ??= result;
+        }
+      }
+      AppLogger.logD('Fetched sheets: $gridRange'); // Debug log
+      return GetSheetState(spreadsheet: mainSheet, gridRange: gridRange);
     } catch (e) {
       return GetSheetState(spreadsheet: SpreadsheetEntity.empty(), gridRange: []);
     }

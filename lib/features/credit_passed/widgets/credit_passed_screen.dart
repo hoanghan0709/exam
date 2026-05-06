@@ -3,14 +3,21 @@ import 'package:exam/core/widgets/card_infor_credit.dart';
 import 'package:exam/core/widgets/empty_data.dart';
 import 'package:exam/export.dart';
 import 'package:exam/features/home/controller/get_today_schedule_provider.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:exam/features/home/widgets/alert_congratulatory.dart';
+import 'package:exam/features/home/widgets/slivder_gap.dart';
 
 class CreditPassedScreen extends ConsumerWidget {
   const CreditPassedScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //watch today schedule to get total credit number of possible credit to pass
     final todayScheduleState = ref.watch(getTodayScheduleProvider);
+    //get passed credit number and total credit number to calculate progress
+    late final int passedCount;
+    late final int totalCount;
+    late final int progress;
+
     return CommonScaffold(
       horizontalPadding: 0,
       body: CustomScrollView(
@@ -22,46 +29,86 @@ class CreditPassedScreen extends ConsumerWidget {
                   error: (error, _) => Text('Lỗi tải config: $error'),
                   loading: () => const ShimmerSheetsSection(),
                   data: (listCreditNumber) {
-                    final passedCount = listCreditNumber.passedTC.length;
-                    final totalCount = todayScheduleState.value?.length ?? -1;
-                    final progress = (passedCount / totalCount * 100).clamp(0, 100).ceil();
-
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 10.h),
-                      padding: EdgeInsets.only(top: 10.h),
-                      // padding: EdgeInsets.symmetric(vertical: 12.h),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: context.colors.success.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      // padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                    if (listCreditNumber.isPassed) {
+                      passedCount = todayScheduleState.value?.length ?? -1;
+                      totalCount = todayScheduleState.value?.length ?? -1;
+                      progress = 100;
+                    } else {
+                      passedCount = listCreditNumber.passedTC.length;
+                      totalCount = todayScheduleState.value?.length ?? -1;
+                      progress = (passedCount / totalCount * 100).clamp(0, 100).ceil();
+                    }
+                    return Center(
+                      child: Column(
+                        spacing: 14.h,
                         children: [
-                          Column(
-                            spacing: 16.h,
+                          SizedBox(height: 10.h),
+                          Stack(
+                            alignment: Alignment.center,
                             children: [
-                              Icon(
-                                LucideIcons.circleCheck300,
-                                color: context.colors.success,
-                                size: 80.w,
+                              ClipOval(
+                                child: SizedBox.fromSize(
+                                  size: Size.fromRadius(58.r),
+                                  child: Assets.images.iconCup.image(width: 96.w, height: 96.h),
+                                ),
                               ),
-                              // SizedBox(height: 10.h),
-                              Row(
+                              // child: Assets.images.iconCup.image(width: 96.w, height: 96.h),
+                              // ),
+                              SizedBox(
+                                height: 140,
+                                width: 140,
+                                child: CircularProgressIndicator(
+                                  value: passedCount / totalCount,
+                                  strokeWidth: 8,
+                                  valueColor: AlwaysStoppedAnimation(
+                                    context.colors.success.withOpacity(0.8),
+                                  ),
+                                  strokeCap: StrokeCap.round,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Column(
                                 children: [
-                                  Text(
-                                    'Bạn đã hoàn thành $passedCount/$totalCount',
-                                    style: context.textStyles.title.copyWith(
-                                      color: context.colors.success,
+                                  Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'Bạn đã hoàn thành ',
+                                          style: context.textStyles.title.copyWith(),
+                                        ),
+                                        TextSpan(
+                                          text: '$passedCount/$totalCount',
+                                          style: context.textStyles.title.copyWith(
+                                            color: context.colors.success,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: ' tín chỉ',
+                                          style: context.textStyles.title.copyWith(),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  Text(
-                                    ' ($progress%)',
-                                    style: context.textStyles.title.copyWith(
-                                      color: context.colors.info,
+                                  Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'và đạt được',
+                                          style: context.textStyles.title.copyWith(),
+                                        ),
+                                        TextSpan(
+                                          text: ' $progress%',
+                                          style: context.textStyles.title.copyWith(
+                                            color: context.colors.success,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -80,9 +127,19 @@ class CreditPassedScreen extends ConsumerWidget {
                 error: (_, __) => const SliverToBoxAdapter(child: SizedBox.shrink()),
                 loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
                 data: (listCreditNumber) {
+                  //check if passed all credit, show alert congratulatory
+                  if (listCreditNumber.isPassed) {
+                    final staffInfoAsync = ref.watch(getStaffInfoProvider);
+                    if (staffInfoAsync.value?.staffInfo.roadmap?.mappedValue != null) {
+                      return AlertCongratulatory();
+                    }
+                  }
                   if (listCreditNumber.passedTC.isEmpty) {
-                    return SliverFillRemaining(
-                      child: const EmptyDataWidget(message: 'Bạn chưa hoàn thành tín chỉ nào!'),
+                    return SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 80.h),
+                        child: const EmptyDataWidget(message: 'Bạn chưa hoàn thành tín chỉ nào!'),
+                      ),
                     );
                   }
                   return SliverList.separated(
@@ -94,12 +151,13 @@ class CreditPassedScreen extends ConsumerWidget {
                         onPressed: () => _launchUrl(tc.link ?? '', context),
                         title: tc.topic ?? 'Không xác định',
                         date: 'Tín chỉ: ${tc.content ?? '-'}',
-                        score: 'Đã đạt ✓',
+                        score: TypeExam.passed,
                       );
                     },
                   );
                 },
               ),
+          SliverGap(MediaQuery.viewInsetsOf(context).bottom + 120.h),
         ],
       ),
     );
@@ -133,7 +191,7 @@ class _CustomHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
 
   _CustomHeaderDelegate({required this.child});
-  static const double _headerHeight = 200.0;
+  static const double _headerHeight = 260.0;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {

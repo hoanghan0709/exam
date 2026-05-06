@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:exam/export.dart';
 
 class GetInforStaff {
@@ -23,18 +25,22 @@ class GetInforStaff {
   // }
 
   /// Lấy thông tin staff theo email
-  Future<InforStaffEntity?> callByEmail({required String gridRange, required String email}) async {
+  Future<InforStaffEntity?> callByEmail({
+    required String gridRange,
+    required String email,
+    required String domain,
+  }) async {
     try {
-      final response = await _apiClient.get(
-        '/${AppConst.keySheet}/values/$gridRange?key=${AppConst.apiKey}',
-      );
+      final response = await _apiClient.get('/${domain}/values/$gridRange?key=${AppConst.apiKey}');
       if (response.statusCode == 200) {
+        log('Response data GetInforStaff: ${response.data}');
         return InforStaffEntity.findByEmail(response.data, email);
       } else {
         throw Exception('Failed to load staff info');
       }
     } catch (e) {
-      throw Exception('Error fetching staff info: $e');
+      AppLogger.logD('Error fetching staff info: $e');
+      return null;
     }
   }
 }

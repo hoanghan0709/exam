@@ -1,3 +1,4 @@
+import 'package:exam/export.dart';
 import 'package:flutter/material.dart';
 
 class AppTextStyles extends ThemeExtension<AppTextStyles> {
@@ -35,72 +36,80 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
   /// Dùng cho badge/chip text (10-11px, bold)
   final TextStyle badge;
 
-  static const light = AppTextStyles(
-    heading: TextStyle(
+  static final light = AppTextStyles(
+    heading: GoogleFonts.manrope(
       fontSize: 28,
       fontWeight: FontWeight.bold,
       color: Color(0xFF3D4F3F),
-      letterSpacing: 1.5,
+      // letterSpacing: 1.5,
     ),
-    title: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A1C1A)),
-    subtitle: TextStyle(
+    title: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A1C1A)),
+    subtitle: GoogleFonts.manrope(
       fontSize: 12,
       fontWeight: FontWeight.w500,
       color: Color(0xFF9E9E9E),
-      letterSpacing: 4,
+      // letterSpacing: 4,
     ),
-    fieldLabel: TextStyle(
+    fieldLabel: GoogleFonts.manrope(
       fontSize: 10,
       fontWeight: FontWeight.bold,
       color: Color(0xFF9E9E9E),
-      letterSpacing: 2,
+      // letterSpacing: 2,
     ),
-    body: TextStyle(fontSize: 13, color: Color(0xFF9E9E9E)),
-    bodyBold: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF1A1C1A)),
-    buttonLabel: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 1),
-    caption: TextStyle(
+    body: GoogleFonts.manrope(fontSize: 13, color: Color(0xFF9E9E9E)),
+    bodyBold: GoogleFonts.manrope(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: Color(0xFF1A1C1A),
+    ),
+    buttonLabel: GoogleFonts.manrope(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 1),
+    caption: GoogleFonts.manrope(
       fontSize: 10,
       fontWeight: FontWeight.w500,
       color: Color(0xFF9E9E9E),
-      letterSpacing: 3,
+      // letterSpacing: 3,
     ),
-    labelSmall: TextStyle(fontSize: 10, color: Color(0xFF5E5E68)),
-    link: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF3D4F3F)),
-    badge: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+    labelSmall: GoogleFonts.manrope(fontSize: 10, color: Color(0xFF5E5E68)),
+    link: GoogleFonts.manrope(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF3D4F3F)),
+    badge: GoogleFonts.manrope(fontSize: 10, fontWeight: FontWeight.bold),
   );
 
-  static const dark = AppTextStyles(
-    heading: TextStyle(
+  static final dark = AppTextStyles(
+    heading: GoogleFonts.manrope(
       fontSize: 28,
       fontWeight: FontWeight.bold,
       color: Color(0xFFF5F5F5),
-      letterSpacing: 1.5,
+      // letterSpacing: 1.5,
     ),
-    title: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFF5F5F5)),
-    subtitle: TextStyle(
+    title: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFF5F5F5)),
+    subtitle: GoogleFonts.manrope(
       fontSize: 12,
       fontWeight: FontWeight.w500,
       color: Color(0xFF9E9E9E),
-      letterSpacing: 4,
+      // letterSpacing: 4,
     ),
-    fieldLabel: TextStyle(
+    fieldLabel: GoogleFonts.manrope(
       fontSize: 10,
       fontWeight: FontWeight.bold,
       color: Color(0xFF9E9E9E),
-      letterSpacing: 2,
+      // letterSpacing: 2,
     ),
-    body: TextStyle(fontSize: 13, color: Color(0xFF9E9E9E)),
-    bodyBold: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFFF5F5F5)),
-    buttonLabel: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 1),
-    caption: TextStyle(
+    body: GoogleFonts.manrope(fontSize: 13, color: Color(0xFF9E9E9E)),
+    bodyBold: GoogleFonts.manrope(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: Color(0xFFF5F5F5),
+    ),
+    buttonLabel: GoogleFonts.manrope(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 1),
+    caption: GoogleFonts.manrope(
       fontSize: 10,
       fontWeight: FontWeight.w500,
       color: Color(0xFF9E9E9E),
-      letterSpacing: 3,
+      // letterSpacing: 3,
     ),
-    labelSmall: TextStyle(fontSize: 10, color: Color(0xFF9E9E9E)),
-    link: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFFD9B382)),
-    badge: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+    labelSmall: GoogleFonts.manrope(fontSize: 10, color: Color(0xFF9E9E9E)),
+    link: GoogleFonts.manrope(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFFD9B382)),
+    badge: GoogleFonts.manrope(fontSize: 10, fontWeight: FontWeight.bold),
   );
 
   @override

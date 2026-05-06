@@ -5,6 +5,7 @@ import 'package:exam/core/widgets/empty_data.dart';
 import 'package:exam/export.dart';
 import 'package:exam/features/home/controller/get_sheets_timeline_provider.dart';
 import 'package:exam/features/home/controller/get_today_schedule_provider.dart';
+import 'package:exam/features/home/widgets/alert_congratulatory.dart';
 import 'package:exam/features/home/widgets/slivder_gap.dart';
 import 'package:exam/utils/ext_formatter.dart';
 
@@ -27,13 +28,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(getSheetsProvider);
     ref.watch(getConfigSheetsProvider);
     final mergedTimeline = ref.watch(mergedTimelineProvider);
     final userAsync = ref.watch(userModelProvider);
     final staffInfoAsync = ref.watch(getStaffInfoProvider);
     ref.watch(getTodayScheduleProvider);
     ref.watch(getSheetsTimelineProvider);
+    final sheetsState = ref.watch(getSheetsProvider);
 
     return userAsync.when(
       loading: () => const Center(child: ShimmerSheetsSection()),
@@ -47,7 +48,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: CustomScrollView(
               slivers: [
                 PinnedHeaderSliver(
-                  child: _buildHeroSection(userAsync.value, staffInfoAsync, context),
+                  child: _buildHeroSection(userAsync.value, staffInfoAsync, context, sheetsState),
                 ),
                 if (staffInfoAsync.value?.staffInfo.roadmap == EnumRoadmap.newStaff)
                   SliverToBoxAdapter(
@@ -60,60 +61,89 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 child: ShimmerBox(height: 60, width: double.infinity),
                               ),
                           error: (error, stack) => Center(child: Text('Error: $error')),
-                          data:
-                              (timeline) => Column(
-                                spacing: 4.h,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text.rich(
-                                    TextSpan(
-                                      style: GoogleFonts.manrope(),
-                                      children: [
-                                        TextSpan(
-                                          text: 'Lộ trình dành cho',
-                                          style: context.textStyles.fieldLabel.copyWith(
-                                            color: context.colors.textSecondary,
-                                            wordSpacing: 1,
-                                            fontSize: 16,
+                          data: (timeline) {
+                            final getInforStaff =
+                                ref.watch(mergedTCProvider).value?.isPassed ?? false;
+                            if (getInforStaff) {
+                              return SizedBox();
+                            }
+                            return Stack(
+                              children: [
+                                Column(
+                                  spacing: 4.h,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text.rich(
+                                      TextSpan(
+                                        style: GoogleFonts.manrope(),
+                                        children: [
+                                          TextSpan(
+                                            text: 'Lộ trình dành cho vị trí',
+                                            style: context.textStyles.heading.copyWith(
+                                              color: context.colors.textPrimary,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: ' NHÂN VIÊN MỚI',
+                                            style: context.textStyles.heading.copyWith(
+                                              color: context.colors.error,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Card(
+                                      color: context.colors.cardBackground.withOpacity(0.6),
+                                      elevation: 1,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(12.r),
+                                        child: Text.rich(
+                                          TextSpan(
+                                            style: GoogleFonts.manrope(),
+                                            children: [
+                                              const TextSpan(text: 'Bạn phải đạt '),
+                                              TextSpan(
+                                                text: '${timeline.totalCredit}',
+                                                style: TextStyle(fontWeight: FontWeight.bold),
+                                              ),
+                                              TextSpan(text: ' tín chỉ đến ngày '),
+                                              TextSpan(
+                                                text: '${timeline.timeline} ',
+                                                style: TextStyle(fontWeight: FontWeight.bold),
+                                              ),
+                                              TextSpan(
+                                                text: 'để hoàn thành lộ trình dành cho vị trí',
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                    ' ${staffInfoAsync.value?.staffInfo.position?.value.toUpperCase() ?? ''}',
+                                                style: TextStyle(fontWeight: FontWeight.bold),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        TextSpan(
-                                          text: ' NHÂN VIÊN MỚI',
-                                          style: context.textStyles.fieldLabel.copyWith(
-                                            color: context.colors.textPrimary,
-                                            wordSpacing: 1,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  top: 30,
+                                  child: Badge(
+                                    label: Text('Mới'),
+                                    backgroundColor: context.colors.error,
+                                    textStyle: context.textStyles.badge.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Text.rich(
-                                    TextSpan(
-                                      style: GoogleFonts.manrope(),
-                                      children: [
-                                        const TextSpan(text: 'Bạn phải đạt '),
-                                        TextSpan(
-                                          text: '${timeline.totalCredit}',
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                        TextSpan(text: ' tín chỉ đến ngày '),
-                                        TextSpan(
-                                          text: '${timeline.timeline} ',
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                        TextSpan(text: 'để hoàn thành lộ trình dành cho'),
-                                        TextSpan(
-                                          text:
-                                              ' ${staffInfoAsync.value?.staffInfo.roadmap?.mappedValue.toUpperCase() ?? ''}',
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -127,6 +157,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         error: (error, _) => Text('Lỗi tải config: $error'),
                         loading: () => const ShimmerSheetsSection(),
                         data: (listCreditNumber) {
+                          if (listCreditNumber.isPassed) {
+                            return SizedBox();
+                          }
                           if (listCreditNumber.isWrongPosition) {
                             return Text(
                               "Đã phát hiện tín chỉ không tồn tại trong vị trí hiện tại, vui lòng liên hệ quản lý để được hỗ trợ.",
@@ -148,7 +181,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       "Tín chỉ còn thiếu ($missing/$total)",
                                       style: context.textStyles.title,
                                     ),
-                                    Text("(Chọn để học ngay)", style: context.textStyles.body),
+                                    Text(
+                                      "(Chọn để học ngay)",
+                                      style: context.textStyles.body.copyWith(
+                                        color: context.colors.textSecondary,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -170,8 +208,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         } else {
                           _maxItems = listCreditNumber.missingTC.length.clamp(0, 5);
                         }
+                        if (listCreditNumber.isPassed) {
+                          final staffInfoAsync = ref.watch(getStaffInfoProvider);
+                          if (staffInfoAsync.value?.staffInfo.roadmap?.mappedValue != null) {
+                            return AlertCongratulatory();
+                          }
+                        }
                         if (listCreditNumber.isWrongPosition) {
-                          return SliverToBoxAdapter(child: SizedBox.shrink());
+                          return const SliverToBoxAdapter(child: SizedBox.shrink());
                         }
                         return listCreditNumber.missingTC.isEmpty
                             ? SliverToBoxAdapter(
@@ -189,7 +233,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   onPressed: () => _launchUrl(tc.link ?? ''),
                                   title: tc.topic ?? 'Không xác định',
                                   date: 'Tín chỉ: ${tc.content ?? '-'}',
-                                  score: 'Học ngay',
+                                  score: TypeExam.missing,
                                 );
                               },
                             );
@@ -275,23 +319,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     UserModel? user,
     AsyncValue<GetStaffInfoState> staffInfoAsync,
     BuildContext context,
+    AsyncValue<GetSheetState> sheetsState,
   ) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        SizedBox(
-          height: 190,
+        Container(
+          height: 220,
           width: double.infinity,
-          child: ClipRRect(
+          decoration: BoxDecoration(
+            color: context.colors.cardBackground.withOpacity(0.6),
+            image: DecorationImage(image: Assets.images.bgBlue.provider(), fit: BoxFit.cover),
             borderRadius: BorderRadius.circular(24),
-            child: CommonBlurHash(
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.error);
-              },
-              fit: BoxFit.cover,
-              hash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
-              imageUrl: AppConst.imgDashBoard,
-            ),
           ),
         ),
         Positioned(
@@ -347,13 +386,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 loading: () => const SizedBox.shrink(),
                 error: (error, stack) => Text('Lỗi tải thông tin: $error'),
                 data: (staffInfo) {
+                  String? nameBranch = sheetsState.value?.branchName;
+                  //log nameBranch
+                  AppLogger.debug('Branch name: $nameBranch');
                   return Column(
+                    spacing: 2.h,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       inforRowCard(staffInfo.staffInfo.position?.value, context, 'Vị trí •'),
                       inforRowCard(staffInfo.staffInfo.startDate, context, 'Ngày vào làm •'),
                       inforRowCard(staffInfo.staffInfo.totalDays, context, 'Số ngày đã làm•'),
                       inforRowCard(staffInfo.staffInfo.roadmap?.mappedValue, context, 'Lộ trình •'),
+                      inforRowCard(nameBranch ?? "Không xác định", context, 'Chi nhánh •'),
                     ],
                   );
                 },
@@ -394,7 +438,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         Text(
           ' ${staffInfo?.toUpperCase() ?? 'Không xác định'}',
           style: context.textStyles.body.copyWith(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w900,
             color: context.colors.textPrimary,
           ),
         ),

@@ -43,7 +43,7 @@ enum EnumRoadmap {
     );
   }
   //get value
-  String get value1 => displayRoadmap;
+  // String get value1 => displayRoadmap;
   //mapping with new name
   String get mappedValue {
     switch (this) {
@@ -115,11 +115,14 @@ class InforStaffEntity {
     if (values == null || values.length < 2) return [];
 
     // Skip header row (index 0)
-    return values
-        .skip(1)
-        .where((row) => (row as List).isNotEmpty && row[0].toString().isNotEmpty)
-        .map((row) => InforStaffEntity._fromRow(row as List<dynamic>))
-        .toList();
+    var d =
+        values
+            .skip(1)
+            .where((row) => (row as List).isNotEmpty && row[0].toString().trim().isNotEmpty)
+            .map((row) => InforStaffEntity._fromRow(row as List<dynamic>))
+            .toList();
+    print('Parsed staff list: $d'); // Debug log
+    return d;
   }
 
   static bool parseBool(dynamic value) {
@@ -132,23 +135,26 @@ class InforStaffEntity {
   /// Thứ tự: [VỊ TRÍ, TÊN, GMAIL, TÁCH NGÀY VÔ LÀM, SỐ NGÀY, LỘ TRÌNH, TC PHẢI ĐẠT, TC ĐÃ HOÀN THÀNH, TC THIẾU]
   factory InforStaffEntity._fromRow(List<dynamic> row) {
     return InforStaffEntity(
-      position: row.isNotEmpty ? EnumPosition.fromJson(row[0]?.toString() ?? '') : null,
-      name: row.length > 1 ? row[1]?.toString() : null,
-      email: row.length > 2 ? row[2]?.toString() : null,
-      startDate: row.length > 3 ? row[3]?.toString() : null,
-      totalDays: row.length > 4 ? row[4]?.toString() : null,
-      roadmap: row.length > 5 ? EnumRoadmap.fromJson(row[5]?.toString() ?? '') : null,
-      requiredCredits: row.length > 6 ? row[6]?.toString() : null,
-      completedCredits: row.length > 7 ? row[7]?.toString() : null,
-      missingCredits: row.length > 8 ? row[8]?.toString() : null,
+      position: row.isNotEmpty ? EnumPosition.fromJson(row[0]?.toString().trim() ?? '') : null,
+      name: row.length > 1 ? row[1]?.toString().trim() : null,
+      email: row.length > 2 ? row[2]?.toString().trim() : null,
+      startDate: row.length > 3 ? row[3]?.toString().trim() : null,
+      totalDays: row.length > 4 ? row[4]?.toString().trim() : null,
+      roadmap: row.length > 5 ? EnumRoadmap.fromJson(row[5]?.toString().trim() ?? '') : null,
+      requiredCredits: row.length > 6 ? row[6]?.toString().trim() : null,
+      completedCredits: row.length > 7 ? row[7]?.toString().trim() : null,
+      missingCredits: row.length > 8 ? row[8]?.toString().trim() : null,
     );
   }
 
   /// Tìm staff theo email (GMAIL ở index 2)
   static InforStaffEntity? findByEmail(Map<String, dynamic> json, String email) {
+    print('Finding staff by email: $email');
     final allStaff = fromJsonList(json);
     try {
-      return allStaff.firstWhere((staff) => staff.email?.toLowerCase() == email.toLowerCase());
+      return allStaff.firstWhere(
+        (staff) => staff.email?.toLowerCase().trim() == email.toLowerCase().trim(),
+      );
     } catch (_) {
       return null;
     }

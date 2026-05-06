@@ -17,7 +17,7 @@ class GetLinkExamSheetsRepo {
       }
       if (response.statusCode == 200) {
         // Giả sử API trả về một list tên sheet
-        AppLogger.info('Response data GetListSheetsRepo: ${response.data}'); // Debug log
+        AppLogger.info('Response data GetLinkExamSheetsRepo: ${response.data}'); // Debug log
         return SheetLinkExamEntity.fromJson(response.data);
       } else {
         throw Exception('Failed to load sheets');

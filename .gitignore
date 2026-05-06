@@ -48,3 +48,4 @@ app.*.map.json
 service_key/
 *.json
 service_key/android/*.jsonservice_key/android/*.json
+run

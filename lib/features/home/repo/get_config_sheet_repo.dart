@@ -19,7 +19,7 @@ class GetConfigSheetsRepo {
       }
       if (response.statusCode == 200) {
         // Giả sử API trả về một list tên sheet
-        AppLogger.info('Response data GetListSheetsRepo: ${response.data}'); // Debug log
+        AppLogger.info('Response data GetConfigSheetsRepo: ${response.data}'); // Debug log
         // return SheetConfigEntity.fromJson(response.data);
         return response.data;
       } else {
