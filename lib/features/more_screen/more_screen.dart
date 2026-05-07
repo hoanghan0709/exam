@@ -2,6 +2,8 @@ import 'package:exam/common_widgets/common_button.dart';
 import 'package:exam/export.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../utils/ext_formatter.dart';
+
 class MoreScreen extends ConsumerStatefulWidget {
   const MoreScreen({super.key});
 
@@ -71,7 +73,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          user.name ?? 'Unknown',
+                          staffInfoAsync.value!.staffInfo.name?.extractString ?? "Không xác định",
                           style: context.textStyles.title.copyWith(fontSize: 20),
                         ),
                         Column(
