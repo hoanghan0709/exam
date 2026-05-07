@@ -6,6 +6,8 @@ import 'package:exam/utils/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../constant/app_const.dart';
+
 class UserModel {
   final String? id;
   final String? email;
@@ -84,10 +86,6 @@ final userModelProvider = AsyncNotifierProvider<UserModelNotifier, UserModel>(
   UserModelNotifier.new,
 );
 
-const String _clientId = "613237324796-4kjqlph2tsimoms268t2kiq5nonra2gu.apps.googleusercontent.com";
-const String _serverClientId =
-    "613237324796-4kjqlph2tsimoms268t2kiq5nonra2gu.apps.googleusercontent.com";
-
 class GoogleSignInNotifier extends AsyncNotifier<GoogleSignInAccount?> {
   StreamSubscription<GoogleSignInAuthenticationEvent>? _authSub;
 
@@ -95,7 +93,10 @@ class GoogleSignInNotifier extends AsyncNotifier<GoogleSignInAccount?> {
   Future<GoogleSignInAccount?> build() async {
     final signIn = GoogleSignIn.instance;
 
-    await signIn.initialize(clientId: _clientId, serverClientId: _serverClientId);
+    await signIn.initialize(
+      clientId: AppConst.clientId(),
+      serverClientId: AppConst.serverClientId(),
+    );
 
     _authSub = signIn.authenticationEvents.listen(
       (event) => _handleAuthEvent(event),
@@ -135,6 +136,9 @@ class GoogleSignInNotifier extends AsyncNotifier<GoogleSignInAccount?> {
     try {
       await GoogleSignIn.instance.authenticate();
     } catch (e, st) {
+      if (e is GoogleSignInException && e.code == GoogleSignInExceptionCode.canceled) {
+        return;
+      }
       state = AsyncValue.error(e, st);
     }
   }

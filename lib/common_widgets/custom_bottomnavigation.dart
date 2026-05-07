@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:exam/export.dart';
@@ -60,12 +61,15 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     }
   }
 
+  //height bottom navigationbar
+  double getPlatformHeight() => Platform.isIOS ? 60.h : 68.h;
+
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
-        height: 60.h,
+        height: getPlatformHeight(),
         margin: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom + 16.h),
         padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.w),
         decoration: BoxDecoration(

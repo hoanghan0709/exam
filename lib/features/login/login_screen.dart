@@ -66,7 +66,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text('Error: $e'),
+                                SelectableText('Error: $e'),
                                 const SizedBox(height: 16),
                                 ElevatedButton(
                                   onPressed: () => ref.invalidate(googleSignInProvider),
